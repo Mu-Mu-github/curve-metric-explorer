@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixels before values: axis calibration – Curve-metric explorer</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+</style>
+
+<style id="embed-style">
+body.embed header.top, body.embed main > h1, body.embed .lede, body.embed main > section, body.embed nav.pn,
+body.embed h2.sr-only, body.embed main > h2, body.embed main > p, body.embed main > ol.refs {display:none !important}
+body.embed {background:var(--panel)}
+body.embed .wrap {max-width:none; padding:6px 8px 10px}
+body.embed .ebar {display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family:var(--sans);
+  font-size:13px; color:var(--graphite); margin:0 0 6px; padding:0 2px}
+body.embed .ebar b {font-weight:600; color:var(--ink)}
+body.embed .ebar a {white-space:nowrap}
+body.embed figure {margin:0}
+body.embed .panel {border-radius:8px}
+body:not(.embed) .ebar {display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>Figure 5 of 8</span></header>
+<main>
+<h1>Pixels before values: axis calibration</h1>
+<div class="lede"><p>Digitization is two steps: find the marks in the image, then map pixels to values through the axis ticks and their labels. CHART-Info therefore scores tick detection (Task 4), plot-element localization in pixels (Task 6a) and calibrated values (Task 6b) as separate tasks, and a 2026 study on real charts found pixel localization consistently more accurate than the final numbers. Move one tick anchor or misread one label and watch the pixel score stay put while the value score collapses.</p></div>
+<figure class="panel">
+<style>
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.bar button.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.bar label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);margin-left:8px}
+.row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary)}
+.row input{flex:1;min-width:0}
+.v{min-width:46px;text-align:right;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:12px 0 4px}
+.card{background:var(--surface-1);border-radius:var(--radius);padding:10px 12px}
+.card .l{font-size:12px;color:var(--text-secondary)}
+.card .n{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.card .s{font-size:11px;color:var(--text-muted)}
+</style>
+<h2 class="sr-only">A chart image with true and detected axis ticks on the left, and the calibrated curves in data space on the right</h2>
+<div class="bar" id="modes"><span style="font-size:13px;color:var(--text-secondary)">Axis:</span><button data-m="lin" class="on">linear, 0 to 8</button><button data-m="log">logarithmic, 0.01 to 10</button><label><input type="checkbox" id="mis">Misread the top label (<span id="mislab">8 → 6</span>)</label></div>
+<svg id="pl" viewBox="0 0 680 262" width="100%" role="img" aria-label="Left: image with axis ticks and traced curve in pixels. Right: curves in data units after calibration"></svg>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px 24px;margin-top:8px">
+<label class="row">Top tick detected off by (px)<input type="range" id="dpx" min="0" max="16" step="1" value="6"><span class="v" id="dpxv"></span></label>
+<label class="row">Trace noise (px)<input type="range" id="tn" min="0" max="6" step="0.5" value="1"><span class="v" id="tnv"></span></label>
+</div>
+<div class="cards">
+<div class="card"><div class="l">Tick score (Task 4)</div><div class="n" id="c1">-</div><div class="s">1 within 1% of diagonal, 0 at 2%</div></div>
+<div class="card"><div class="l">Pixel score (Task 6a)</div><div class="n" id="c2">-</div><div class="s">1 − D ÷ T, T = 5% of image</div></div>
+<div class="card"><div class="l">Value recall (Task 6b)</div><div class="n" id="c3">-</div><div class="s">relative error, ε variant</div></div>
+<div class="card"><div class="l">NRMSE in data units</div><div class="n" id="c4">-</div><div class="s">÷ ground-truth range</div></div>
+<div class="card"><div class="l">Largest relative error</div><div class="n" id="c5">-</div><div class="s" id="c5s"></div></div>
+</div>
+</figure>
+<p class="cap"><b>Figure 5.</b> Left: the image. Blue ticks and labels are the truth; orange ticks are what the digitizer detected, with the top tick displaced by the chosen number of pixels and, optionally, its label misread. The traced curve (orange) follows the true curve (blue) up to the trace noise. Right: the same two curves after calibration, in data units. Red bars are value errors.</p>
+<section><h2>What to try</h2>
+<ul>
+<li>With the top tick off by 6 px, the pixel score is still above 0.9 and the tick score has only started to fall, but every value above the middle of the axis is stretched: the value recall and the NRMSE react, the pixel score does not. This is the gap between Task 6a and Task 6b.</li>
+<li>Tick <b>Misread the top label</b> on the linear axis: 8 read as 6 compresses every value by a quarter. The trace is pixel-perfect, so the pixel score is unchanged; the largest relative error is 25% everywhere.</li>
+<li>Switch to the <b>logarithmic</b> axis and misread 10 as 100. The calibration now assigns four decades to three decades of pixels. Values at the bottom are almost right and values at the top are ten times too large: on a log axis a label error is a multiplicative error, which is why log axes were the most frequent failure mode in PlotGround.</li>
+<li>Set the tick offset to 0 and raise the trace noise. Now the two spaces agree: pixel score and value scores fall together, and the tick score stays at 1.</li>
+</ul>
+</section>
+<section><h2>How it is computed</h2>
+<div class="eq">Calibration (linear):  value = Lₜₒₚ · (pᵧ,ᵇₒₜ − pᵧ) ÷ (pᵧ,ᵇₒₜ − pᵧ,ₜₒₚ)   with the detected top anchor pᵧ,ₜₒₚ + Δ and label Lₜₒₚ
+Calibration (log):  log₁₀ value interpolated linearly between the detected anchors, then exponentiated
+Task 4 tick score (competition papers):  s = 1 if d ≤ a,  (b − d)/(b − a) if a < d ≤ b,  0 beyond;  a = 1%, b = 2% of the image diagonal; weighted F-measure over ticks
+Task 6a (2022/2023 rule):  per element max(0, 1 − D ÷ T), D = pixel distance, T = 5% of the smallest image dimension
+Task 6b recall, ε variant:  Σ (1 − min(1, |v − I(P, u)| ÷ (|v| + ε))) · Interval ÷ (uₘ − u₁),  ε = ground-truth range ÷ 100</div>
+</section>
+<section><h2>Notes on this implementation</h2>
+<ul>
+<li>The x-axis is assumed perfectly calibrated; only the y-axis is perturbed. The traced curve is the true curve in pixels plus uniform jitter of the chosen amplitude.</li>
+<li>CHART-Info’s task pages describe the Task 4 thresholds as set by the inter-tick spacing of each chart, whereas the ICDAR 2019 and ICPR 2020 competition papers print the 1% and 2% of the image diagonal used here. The 2019/2020 editions used T = 1% with a squared fall-off for Task 6a; the 5% linear rule is the 2022/2023 one.</li>
+<li>The ε variant of the continuous metric is used so that the near-zero start of the linear curve does not dominate; without it, one pixel of trace noise at a value of 0.02 is already a total miss.</li>
+<li>In the log view the right-hand axis spans 0.01 to 100 so that a misread label can be shown; the true data never exceed 10.</li>
+</ul>
+</section>
+<section><h2>References</h2>
+<ol class="refs"><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li><li>K. Davila, B. U. Kota, S. Setlur, V. Govindaraju, C. Tensmeyer, S. Shekhar, R. Chaudhry, “ICDAR 2019 Competition on Harvesting Raw Tables from Infographics (CHART-Infographics),” <i>Proc. ICDAR 2019</i>, pp. 1594–1599.</li><li>K. Davila, F. Xu, S. Ahmed, D. A. Mendoza, S. Setlur, V. Govindaraju, “ICPR 2022: Challenge on Harvesting Raw Tables from Infographics (CHART-Infographics),” <i>Proc. ICPR 2022</i>, pp. 4995–5001.</li><li>Y. Yuan, S. Liang, J. Zhang, Y. Wang, Z. Wang, “A deep learning framework for scientific chart data extraction and reconstruction,” <i>Communications Engineering</i> (2026), doi:10.1038/s44172-026-00691-8.</li><li>“Bar-JEPA: Extracting Values from Bar Chart with Joint-Embedding Predictive Architecture,” arXiv:2608.06062 (2026).</li><li>Y. Zhang, B. Li, H. Duan, J. Miao, Y. Wang, X. Du, C. Li, S. Liu, K. Wu, J. Zou, “PlotGround: Grounding Plot Digitization in Real Scientific Figures and Their Source Data,” arXiv:2610.06825 (2026).</li><li>J. Lal, A. Mitkari, M. Bhosale, D. Doermann, “LineFormer: Line Chart Data Extraction Using Instance Segmentation,” <i>Proc. ICDAR 2023</i>, doi:10.1007/978-3-031-41734-4_24 (arXiv:2305.01837). Code: <a href="https://github.com/TheJaeLal/LineFormer">github.com/TheJaeLal/LineFormer</a></li></ol>
+</section>
+<nav class="pn" aria-label="Figures"><a href="fig4-scatter.html">Previous: Scatter plots: a hit within tolerance, and the tolerance ladder</a><a class="r" href="fig6-benchmark.html">Next: Coverage and failures: scoring a whole benchmark</a></nav>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>const IMW=360,IMH=240,PX0=60,PX1=340,PY0=20,PY1=220,DIAG=Math.hypot(IMW,IMH);
+let mode='lin';
+const sg=x=>1/(1+Math.exp(-(x-0.58)/0.075));
+const f=x=>mode==='lin'?0.02+7.98*sg(x):Math.pow(10,-2+3*sg(x));
+const v2u=v=>mode==='lin'?v/8:(Math.log10(v)+2)/3;
+const pyU=u=>PY1-u*(PY1-PY0);
+const ticks=()=>mode==='lin'?[0,2,4,6,8]:[0.01,0.1,1,10];
+const fmt=v=>mode==='lin'?v.toFixed(0):(v>=1?v.toFixed(0):v.toFixed(2));
+function draw(){const dpx=+$('dpx').value,tn=+$('tn').value,mis=$('mis').checked;
+$('dpxv').textContent=dpx+' px';$('tnv').textContent=tn.toFixed(1)+' px';$('mislab').textContent=mode==='lin'?'8 → 6':'10 → 100';
+const top=mode==='lin'?(mis?6:8):(mis?100:10),bot=mode==='lin'?0:0.01;
+const uDet=py=>(PY1-py)/(PY1-(PY0+dpx));
+const cal=py=>mode==='lin'?top*uDet(py):Math.pow(10,Math.log10(bot)+(Math.log10(top)-Math.log10(bot))*uDet(py));
+const K=60,cols=[];for(let k=0;k<=K;k++){const x=k/K,v=f(x),py=pyU(v2u(v)),pt=py+tn*rnd(k+31);cols.push({x:x,v:v,py:py,pt:pt,vd:cal(pt)})}
+const tk=ticks(),a=0.01*DIAG,b=0.02*DIAG;let ts=0;tk.forEach((t,i)=>{const D=i===tk.length-1?dpx:0;ts+=D<=a?1:D>=b?0:(b-D)/(b-a)});ts/=tk.length;
+const T=0.05*Math.min(IMW,IMH);let s6a=0;cols.forEach(c=>s6a+=Math.max(0,1-Math.abs(c.pt-c.py)/T));s6a/=cols.length;
+const P=cols.map(c=>[c.x,c.vd]),vals=cols.map(c=>c.v),vmin=Math.min(...vals),vmax=Math.max(...vals),eps=(vmax-vmin)/100;
+const GX=[];for(let i=0;i<=16;i++)GX.push(i/16);let rec=0;GX.forEach((u,i)=>{const l=i===0?0:(GX[i-1]+u)/2,r=i===16?1:(u+GX[i+1])/2,v=f(u);rec+=(r-l)*(1-Math.min(1,Math.abs(v-ip(P,u))/(Math.abs(v)+eps)))});
+let s2=0,mx=0,mxx=0;cols.forEach(c=>{const d=c.vd-c.v;s2+=d*d;const r=Math.abs(d)/c.v;if(r>mx){mx=r;mxx=c.x}});const nrmse=Math.sqrt(s2/cols.length)/(vmax-vmin);
+const svg=$('pl');svg.innerHTML='';
+const OX=6,OY=8;svg.appendChild(el('rect',{x:OX,y:OY,width:IMW,height:IMH,rx:4,style:'fill:var(--panel);stroke:var(--border-strong)'}));
+svg.appendChild(el('text',{x:OX+8,y:OY+14,'font-size':11,style:'fill:var(--text-muted)'},'image, '+IMW+' × '+IMH+' px'));
+svg.appendChild(el('line',{x1:OX+PX0,x2:OX+PX0,y1:OY+PY0-4,y2:OY+PY1+4,style:'stroke:var(--text-primary)','stroke-width':1.2}));
+svg.appendChild(el('line',{x1:OX+PX0-4,x2:OX+PX1,y1:OY+PY1,y2:OY+PY1,style:'stroke:var(--text-primary)','stroke-width':1.2}));
+tk.forEach((t,i)=>{const py=pyU(v2u(t)),last=i===tk.length-1;svg.appendChild(el('line',{x1:OX+PX0-7,x2:OX+PX0,y1:OY+py,y2:OY+py,stroke:'#2a78d6','stroke-width':2}));svg.appendChild(el('text',{x:OX+PX0-10,y:OY+py+4,'text-anchor':'end','font-size':11,style:'fill:#2a78d6'},fmt(t)));
+const pd=last?py+dpx:py;svg.appendChild(el('line',{x1:OX+PX0,x2:OX+PX0+8,y1:OY+pd,y2:OY+pd,stroke:'#eb6834','stroke-width':2}));if(last&&(mis||dpx>0))svg.appendChild(el('text',{x:OX+PX0+12,y:OY+pd+4,'font-size':11,style:'fill:#eb6834'},'read as '+fmt(top)+(dpx?' at +'+dpx+' px':'')))});
+if(mode==='log'){tk.forEach((t,i)=>{if(i<tk.length-1)for(let m=2;m<10;m++){const py=pyU(v2u(t*m));svg.appendChild(el('line',{x1:OX+PX0-3,x2:OX+PX0,y1:OY+py,y2:OY+py,stroke:'#2a78d6','stroke-width':1}))}})}
+const PXx=x=>OX+PX0+(PX1-PX0)*x;
+svg.appendChild(el('path',{d:cols.map((c,k)=>(k?'L':'M')+PXx(c.x).toFixed(1)+' '+(OY+c.py).toFixed(1)).join(''),fill:'none',stroke:'#2a78d6','stroke-width':2}));
+svg.appendChild(el('path',{d:cols.map((c,k)=>(k?'L':'M')+PXx(c.x).toFixed(1)+' '+(OY+c.pt).toFixed(1)).join(''),fill:'none',stroke:'#eb6834','stroke-width':2,'stroke-dasharray':'5 4'}));
+svg.appendChild(el('text',{x:OX+PX0+6,y:OY+PY1+16,'font-size':11,style:'fill:var(--text-muted)'},'traced in pixels: both ticks and marks'));
+const RX0=410,RX1=660,RY0=22,RY1=222,ymaxR=mode==='lin'?10:100,yminR=mode==='lin'?0:0.01;
+const RY=v=>mode==='lin'?RY1-(RY1-RY0)*v/ymaxR:RY1-(RY1-RY0)*(Math.log10(Math.max(v,yminR))-Math.log10(yminR))/(Math.log10(ymaxR)-Math.log10(yminR));
+const RX=x=>RX0+(RX1-RX0)*x;
+svg.appendChild(el('text',{x:RX0,y:12,'font-size':11,style:'fill:var(--text-muted)'},'after calibration, data units'));
+const rt=mode==='lin'?[0,2,4,6,8,10]:[0.01,0.1,1,10,100];rt.forEach(t=>{svg.appendChild(el('line',{x1:RX0,x2:RX1,y1:RY(t),y2:RY(t),style:'stroke:var(--border)'}));svg.appendChild(el('text',{x:RX0-5,y:RY(t)+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},fmt(t)))});
+for(let k=5;k<=K;k+=10){const c=cols[k];svg.appendChild(el('line',{x1:RX(c.x),x2:RX(c.x),y1:RY(c.v),y2:RY(Math.min(c.vd,ymaxR*1.05)),stroke:'#e34948','stroke-width':1.6}))}
+svg.appendChild(el('path',{d:cols.map((c,k)=>(k?'L':'M')+RX(c.x).toFixed(1)+' '+RY(c.v).toFixed(1)).join(''),fill:'none',stroke:'#2a78d6','stroke-width':2}));
+svg.appendChild(el('path',{d:cols.map((c,k)=>(k?'L':'M')+RX(c.x).toFixed(1)+' '+Math.max(RY0-6,RY(c.vd)).toFixed(1)).join(''),fill:'none',stroke:'#eb6834','stroke-width':2,'stroke-dasharray':'5 4'}));
+$('c1').textContent=ts.toFixed(2);$('c2').textContent=s6a.toFixed(3);$('c3').textContent=rec.toFixed(3);$('c4').textContent=nrmse.toFixed(3);$('c5').textContent=(100*mx).toFixed(0)+'%';$('c5s').textContent='at x = '+mxx.toFixed(2)+(mode==='log'?' (factor '+(1+mx).toFixed(2)+')':'');
+}
+['dpx','tn'].forEach(id=>$(id).addEventListener('input',draw));$('mis').addEventListener('change',draw);
+document.querySelectorAll('#modes button').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.m;document.querySelectorAll('#modes button').forEach(o=>o.classList.toggle('on',o===b));draw()}));
+draw();</script>
+
+<script id="embed-script">
+(function(){
+  var PRESET = {};
+  var FULL = "../fig5-calibration.html";
+  var TITLE = "Pixels before values: reading the axes";
+  function apply(q){
+    Object.keys(q).forEach(function(k){
+      var v = q[k];
+      if (k === 'focus') return;
+      if (k === 'btn') {
+        var b = document.querySelector('button[data-m="'+v+'"],button[data-b="'+v+'"]');
+        if (b) b.click();
+        return;
+      }
+      var el = document.getElementById(k); if (!el) return;
+      if (el.type === 'checkbox') { el.checked = (v === '1'); }
+      else { el.value = v; }
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      el.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+  }
+  window.addEventListener('load', function(){
+    try {
+      var hash = {}; new URLSearchParams(location.hash.slice(1)).forEach(function(v,k){ hash[k]=v; });
+      var focus = hash.focus !== '0';
+      if (focus) {
+        document.body.classList.add('embed');
+        var main = document.querySelector('main') || document.body;
+        var bar = document.createElement('div'); bar.className = 'ebar';
+        bar.innerHTML = '<span><b>' + TITLE + '</b></span>' +
+                        '<a href="' + FULL + '" target="_blank" rel="noopener">Full page with the explanation \u2197</a>';
+        main.insertBefore(bar, main.firstChild);
+      }
+      var state = {}; Object.keys(PRESET).forEach(function(k){ state[k]=PRESET[k]; });
+      Object.keys(hash).forEach(function(k){ state[k]=hash[k]; });
+      apply(state);
+      window.scrollTo(0, 0);
+    } catch (e) { if (window.console) console.error(e); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curve-metric explorer II: the common criteria</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+
+code{font-family:var(--font-mono);font-size:.88em}
+.hero{margin:6px 0 8px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background-color:var(--panel);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;background-position:-1px -1px}
+.hero svg{display:block;width:100%;height:auto}
+.draw{animation:draw 1.5s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.dot,.tick,.ring{opacity:0;animation:pop .35s ease-out forwards}
+@keyframes pop{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.draw{animation:none}.dot,.tick,.ring{animation:none;opacity:1}}
+ol.figs{list-style:none;padding:0;margin:8px 0 0;border-top:1px solid var(--rule)}
+ol.figs li{display:grid;grid-template-columns:86px 1fr;column-gap:14px;padding:12px 0;border-bottom:1px solid var(--rule);max-width:none}
+ol.figs .fn{grid-row:1 / span 2;font-family:var(--sans);font-size:14px;color:var(--graphite);padding-top:3px}
+ol.figs a{font-size:18px;font-weight:600;text-decoration:none}
+ol.figs a:hover{text-decoration:underline}
+ol.figs .fd{color:var(--graphite);font-size:16px}
+@media (max-width:520px){ol.figs li{grid-template-columns:1fr}ol.figs .fn{grid-row:auto;padding:0}}</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>8 interactive figures, offline</span></header>
+<main>
+<h1>How is a digitized curve scored? The common criteria</h1>
+<div class="lede"><p>Eight interactive figures on the criteria that most published benchmarks share when they score the digitization of a line plot or a scatter plot: one-to-one pairing, error on a common grid, a hit within tolerance, the choice of normalizer, axis calibration, coverage and failure rules, order-aware distances for shifts and loops, and a final scorecard that shows which criterion catches which defect. Move the sliders and the scores are recomputed as you watch. Everything runs offline in your browser.</p></div>
+<figure>
+<div class="hero"><svg id="hero" viewBox="0 0 680 250" role="img" aria-label="Left: a source line (blue) and its digitization (orange) with red vertical gaps on a common grid. Right: ground-truth scatter points with tolerance circles and digitized points inside or outside them"></svg></div>
+<p class="cap"><b>Figure 0.</b> The two cases every benchmark has to score. A line plot (left) is compared at shared x positions after interpolation; a scatter plot (right) is compared point by point, and a digitized point counts as a hit when it falls within a tolerance of its paired ground-truth point. Everything else is a choice about pairing, normalization, aggregation and missing data.</p>
+</figure>
+
+<h2>List of figures</h2>
+<ol class="figs"><li><span class="fn">Figure 1</span><a href="fig1-pipeline.html">Six decisions behind every curve score</a><span class="fd">Pair, sample, measure, normalize, aggregate, and decide what missing data costs: the choices that define each benchmark, side by side.</span></li><li><span class="fn">Figure 2</span><a href="fig2-pairing.html">Pairing series one-to-one: recall, precision and swapped labels</a><span class="fd">Several curves in one plot are paired by assignment before anything is scored; the denominator decides whether missing and extra curves cost, and crossing curves can be right in value but wrong in identity.</span></li><li><span class="fn">Figure 3</span><a href="fig3-line-error.html">Line plots: error on a shared grid, and what you divide by</a><span class="fd">The same digitized curve under four normalizers: the value itself, the y-range, the chart maximum and the minor tick interval.</span></li><li><span class="fn">Figure 4</span><a href="fig4-scatter.html">Scatter plots: a hit within tolerance, and the tolerance ladder</a><span class="fd">Points are unordered, so a digitized point is correct if it lands within a tolerance of its partner; the tolerance you choose decides the score, and the PlotGround precision cliff shows why benchmarks now report several.</span></li><li><span class="fn">Figure 5</span><a href="fig5-calibration.html">Pixels before values: axis calibration</a><span class="fd">A curve traced perfectly in the image can still come out wrong in data units; CHART-Info scores the two steps separately, and a log axis multiplies the damage.</span></li><li><span class="fn">Figure 6</span><a href="fig6-benchmark.html">Coverage and failures: scoring a whole benchmark</a><span class="fd">Twenty figures at once: how output success, trusted usability and FPC-NRMSE account for empty, truncated and over-counted outputs, and why averaging only over successes misleads.</span></li><li><span class="fn">Figure 7</span><a href="fig7-loops.html">Loops and shifts: order-aware distances</a><span class="fd">A cyclic voltammogram has two currents at every potential; vertical-error metrics break, and the order-preserving distances (Fréchet, ECS) are what remain.</span></li><li><span class="fn">Figure 8</span><a href="fig8-scorecard.html">One digitization, every criterion</a><span class="fd">Switch defects on and off and watch nine scores respond; the table shows which criterion catches which defect, against the disagreement between two human annotators.</span></li></ol>
+
+<h2>The criteria most benchmarks share</h2>
+<div class="tw"><table>
+<thead><tr><th>Criterion</th><th>Where it comes from</th><th>Used by (examples)</th><th>Figure</th></tr></thead>
+<tbody>
+<tr><td>One-to-one pairing of series and points, normalized by the larger count</td><td>Hungarian assignment; max(N<sub>GT</sub>, N<sub>pred</sub>) in the denominator so that missing and extra items both cost</td><td>CHART-Info 6b, RNSS, RMS, SCRM, FPC-NRMSE, Plot2Spectra, Scatteract, Bar-JEPA, MatViX</td><td>2</td></tr>
+<tr><td>Line plots: y-error at shared x after interpolation, aggregated over the curve</td><td>Continuous series cannot be compared point-list to point-list, so one curve is read off at the other's x positions or both on a common grid</td><td>CHART-Info continuous metric, ChartOCR, PlotExtract, FPC-NRMSE, Plot2Spectra RMSE, ChartZero NRMSE, Benetech</td><td>3</td></tr>
+<tr><td>A normalizer: value, range, chart maximum or tick interval</td><td>Relative error explodes near zero; range or tick normalization keeps the same pixel miss worth the same score anywhere on the chart</td><td>CHART-Info and RMS (value), FPC-NRMSE and ECS (range), Adaptive MAPE (maximum), TBE (minor tick)</td><td>3</td></tr>
+<tr><td>Scatter plots: a hit within a tolerance, reported as precision, recall and F1, or accuracy at several tolerances</td><td>Point sets are unordered; a point is correct if it lies within 2% (Scatteract), within a Mahalanobis radius (CHART-Info) or within 1, 2, 5 or 10% (PlotGround, Bar-JEPA, PlotPick)</td><td>Scatteract, CHART-Info scatter metric, PlotGround, Bar-JEPA, PlotPick, Cardaras et al.</td><td>4</td></tr>
+<tr><td>Pixel-space and data-space scored separately</td><td>Tracing a mark correctly in pixels does not guarantee correct values after axis calibration</td><td>CHART-Info Task 6a vs 6b, Yuan et al. 2026, Bar-JEPA oracle-OCR ablation, LineFormer</td><td>5</td></tr>
+<tr><td>Coverage and failure rules</td><td>Averaging only over successful outputs hides failures; missing regions are reported or penalized, not extrapolated away</td><td>PlotExtract (left/right miss), FPC-NRMSE (trust gate), ExChart (format success), ChartArena (parse failure = 0)</td><td>6</td></tr>
+<tr><td>Order-aware distances for shifts and loops</td><td>Vertical error over-penalizes steep segments and is undefined for curves that are not functions of x</td><td>Fréchet distance (MatViX), ECS / ERP (EpiCurveBench), DTW (comparison)</td><td>7</td></tr>
+<tr><td>Table-level key-value matching for comparability, derived quantities for use</td><td>RMS-F1 and SCRM are what most papers report; derived quantities and a two-annotator noise floor are what a scientist needs</td><td>DePlot, ChartX, WB-ChartExtract, ICDAR 2026 (RMS); PlotChain, EpiCurveBench (derived); Drevon et al. (human floor)</td><td>8</td></tr>
+</tbody></table></div>
+<p>The companion collection, the first <i>Curve-metric explorer</i>, walks through individual published metrics (CHART-Info step by step, three coverage rules, pixel matching, Fréchet, DTW versus ECS, RMS versus derived quantities). This second collection is organized by criterion rather than by paper, adds scatter plots, axis calibration, normalizers, whole-benchmark failure accounting and closed loops, and ends with a scorecard that runs every criterion on one digitization at once.</p>
+
+<h2>Running the figures</h2>
+<p>Open <code>index.html</code> in a current version of Chrome, Edge, Firefox or Safari. There is nothing to install, no network connection is needed, and no data leaves your computer. Each figure is also a complete page on its own, so a single file can be shared or projected. To put the collection online, copy the folder to any static web host.</p>
+
+<h2>About these demos</h2>
+<p>All curves are synthetic, and the metrics are teaching implementations written from the published definitions. Where a choice had to be made that the sources do not fix, it is listed on that figure’s page under “Notes on this implementation”. To benchmark real digitizations, use the official scorers, such as the CHART-Info metric document, the ExChart and EpiCurveBench code, and the DigitizerBench definitions.</p>
+
+<h2>References</h2>
+<ol class="refs"><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li><li>K. Davila, B. U. Kota, S. Setlur, V. Govindaraju, C. Tensmeyer, S. Shekhar, R. Chaudhry, “ICDAR 2019 Competition on Harvesting Raw Tables from Infographics (CHART-Infographics),” <i>Proc. ICDAR 2019</i>, pp. 1594–1599.</li><li>K. Davila, F. Xu, S. Ahmed, D. A. Mendoza, S. Setlur, V. Govindaraju, “ICPR 2022: Challenge on Harvesting Raw Tables from Infographics (CHART-Infographics),” <i>Proc. ICPR 2022</i>, pp. 4995–5001.</li><li>J. Lal, A. Mitkari, M. Bhosale, D. Doermann, “LineFormer: Line Chart Data Extraction Using Instance Segmentation,” <i>Proc. ICDAR 2023</i>, doi:10.1007/978-3-031-41734-4_24 (arXiv:2305.01837). Code: <a href="https://github.com/TheJaeLal/LineFormer">github.com/TheJaeLal/LineFormer</a></li><li>Y. Yuan, S. Liang, J. Zhang, Y. Wang, Z. Wang, “A deep learning framework for scientific chart data extraction and reconstruction,” <i>Communications Engineering</i> (2026), doi:10.1038/s44172-026-00691-8.</li><li>J. Luo, Z. Li, J. Wang, C.-Y. Lin, “ChartOCR: Data Extraction from Charts Images via a Deep Hybrid Framework,” <i>Proc. WACV 2021</i>.</li><li>N. Siegel, Z. Horvitz, R. Levin, S. Divvala, A. Farhadi, “FigureSeer: Parsing Result-Figures in Research Papers,” <i>Proc. ECCV 2016</i>.</li><li>M. Cliche, D. Rosenberg, D. Madeka, C. Yee, “Scatteract: Automated Extraction of Data from Scatter Plots,” <i>Proc. ECML PKDD 2017</i>.</li><li>M. P. Polak, D. Morgan, “Leveraging Vision Capabilities of Multimodal LLMs for Automated Data Extraction from Plots,” arXiv:2503.12326 (2025). Data: <a href="https://doi.org/10.6084/m9.figshare.28559639">doi.org/10.6084/m9.figshare.28559639</a></li><li>F. Ma, R. Akhtar, A. Joshi, X. Li, H. Sun, Z. Xiang, X. Chen, Y. Zhao, “LinePilot Digitizer: Line-Plot Recovery with Manual and Automatic Calibration,” arXiv:2609.19377 (2026). Introduces DigitizerBench and FPC-NRMSE.</li><li>W. Jiang, K. Li, T. Spreadbury, E. Schwenker, O. Cossairt, M. K. Y. Chan, “Plot2Spectra: an automatic spectra extraction tool,” <i>Digital Discovery</i> 1, 719–731 (2022), doi:10.1039/D1DD00036E. Code: <a href="https://github.com/MaterialEyes/Plot2Spec">github.com/MaterialEyes/Plot2Spec</a></li><li>M. T. Islam, Y. Mahmud, S. K. Saha, M. Tehranipoor, F. Farahmandi, “ChartZero: Synthetic Priors Enable Zero Shot Chart Data Extraction,” arXiv:2605.05820 (2026).</li><li>“Bar-JEPA: Extracting Values from Bar Chart with Joint-Embedding Predictive Architecture,” arXiv:2608.06062 (2026).</li><li>Y. Zhang, B. Li, H. Duan, J. Miao, Y. Wang, X. Du, C. Li, S. Liu, K. Wu, J. Zou, “PlotGround: Grounding Plot Digitization in Real Scientific Figures and Their Source Data,” arXiv:2610.06825 (2026).</li><li>G. Khalighinejad, S. Scott, O. Liu, K. L. Anderson, R. Stureborg, A. Tyagi, B. Dhingra, “MatViX: Multimodal Information Extraction from Visually Rich Articles,” <i>Proc. NAACL 2025</i>. <a href="https://matvix-bench.github.io/">matvix-bench.github.io</a></li><li>T. Eiter, H. Mannila, “Computing Discrete Fréchet Distance,” Technical Report CD-TR 94/64, Christian Doppler Laboratory for Expert Systems, TU Vienna (1994).</li><li>T. Berkane, M. S. Majumder, “EpiCurveBench: Evaluating VLMs on Epidemic Curve Digitization,” arXiv:2605.27195 (2026). Code: <a href="https://github.com/tberkane/EpiCurveBench">github.com/tberkane/EpiCurveBench</a></li><li>L. Chen, R. Ng, “On the Marriage of Lp-norms and Edit Distance,” <i>Proc. VLDB 2004</i>, pp. 792–803.</li><li>H. Sakoe, S. Chiba, “Dynamic programming algorithm optimization for spoken word recognition,” <i>IEEE Trans. Acoust., Speech, Signal Process.</i> 26(1), 43–49 (1978).</li><li>A. Masry, D. X. Long, J. Q. Tan, S. Joty, E. Hoque, “ChartQA: A Benchmark for Question Answering about Charts with Visual and Logical Reasoning,” <i>Findings of ACL 2022</i>, pp. 2263–2279.</li><li>F. Liu, J. M. Eisenschlos, F. Piccinno, S. Krichene, C. Pang, K. Lee, M. Joshi, W. Chen, N. Collier, Y. Altun, “DePlot: One-shot visual language reasoning by plot-to-table translation,” <i>Findings of ACL 2023</i>, pp. 10381–10399, doi:10.18653/v1/2023.findings-acl.660.</li><li>K.-H. Huang, H. P. Chan, M. Fung, H. Qiu, M. Zhou, S. Joty, S.-F. Chang, H. Ji, “From Pixels to Insights: A Survey on Automatic Chart Understanding in the Era of Large Foundation Models,” arXiv:2403.12027. Defines RNSS, RMS and SCRM; rewrites the RMS equations to follow the reference code.</li><li>R. Xia, B. Zhang, H. Ye, X. Yan, Q. Liu, H. Zhou, Z. Chen, M. Dou, B. Shi, J. Yan, Y. Qiao, “StructChart: Perception, Structuring, Reasoning for Visual Chart Understanding,” arXiv:2309.11268 (2023). Introduces SCRM.</li><li>S. H. Song, A. A. Efat, W. Tavanapong, “Assessing Y-Axis Influence: Bias in Multimodal Language Models on Chart-to-Table Translation,” <i>Findings of ACL 2026</i>, doi:10.18653/v1/2026.findings-acl.1765. Introduces Tick-Based Error.</li><li>Y. He, P. Ying, L. Cheng, K. Peng, Y. Tian, D. Deng, Y. Wu, “Making Multimodal LLMs Reliable Chart Data Extractors: A Benchmark and Training Framework,” <i>Proc. CHI 2026</i>, doi:10.1145/3772318.3790721 (arXiv:2606.29808). Introduces ExChart-Bench and Adaptive MAPE.</li><li>T. Berkane, Q. Wang, M. S. Majumder, “Self-Ensembling Vision-Language Models for Chart Data Extraction,” arXiv:2605.27298 (2026). Introduces WB-ChartExtract.</li><li>T. Carstensen, “PlotPick: AI-powered batch extraction of numerical data from scientific figures,” arXiv:2605.06021v2 (2026).</li><li>M. Ravishankara, “PlotChain: Deterministic Checkpointed Evaluation of Multimodal LLMs on Engineering Plot Reading,” arXiv:2602.13232 (2026).</li><li>D. Drevon, S. R. Fursa, A. L. Malcolm, “Intercoder Reliability and Validity of WebPlotDigitizer in Extracting Graphed Data,” <i>Behavior Modification</i> 41(2), 323–339 (2017), doi:10.1177/0145445516673998.</li><li>H. W. Kuhn, “The Hungarian method for the assignment problem,” <i>Naval Research Logistics Quarterly</i> 2, 83–97 (1955).</li><li>V. I. Levenshtein, “Binary codes capable of correcting deletions, insertions, and reversals,” <i>Soviet Physics Doklady</i> 10, 707–710 (1966).</li><li>P. C. Mahalanobis, “On the generalised distance in statistics,” <i>Proc. Natl. Inst. Sci. India</i> 2, 49–55 (1936).</li></ol>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>(function(){const s=document.getElementById('hero');if(!s)return;
+const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// left: line plot with gaps on a common grid
+const X=x=>36+290*x,Y=y=>226-196*y;
+const f=x=>0.12+0.1*x+0.55*Math.exp(-(((x-0.42)/0.09)**2))+0.2*Math.exp(-(((x-0.78)/0.05)**2));
+let d='';for(let i=0;i<=300;i++){const x=i/300;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(f(x)).toFixed(1)}
+const gt=el('path',{d:d,fill:'none',stroke:'#2a78d6','stroke-width':2.5});s.appendChild(gt);
+if(!reduce&&typeof gt.getTotalLength==='function'){const L=gt.getTotalLength();gt.style.strokeDasharray=L;gt.style.strokeDashoffset=L;gt.setAttribute('class','draw')}
+const P=[];for(let i=0;i<30;i++){const x=0.03+0.94*i/29;P.push([x,f(x-0.02)+0.015*rnd(i+3)])}
+let dp='';P.forEach((p,i)=>{dp+=(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)});
+const pd=el('path',{d:dp,fill:'none',stroke:'#eb6834','stroke-width':2,'stroke-dasharray':'5 4'});s.appendChild(pd);
+if(!reduce&&typeof pd.getTotalLength==='function'){const L=pd.getTotalLength();pd.style.strokeDasharray=L;pd.style.strokeDashoffset=L;pd.setAttribute('class','draw');pd.style.animationDelay='0.6s'}
+for(let k=0;k<=20;k++){const x=0.05+0.9*k/20,y=ip(P,x);const t=el('line',{x1:X(x),x2:X(x),y1:Y(f(x)),y2:Y(y),stroke:'#e34948','stroke-width':1.8,class:'tick'});t.style.animationDelay=(1.8+0.04*k)+'s';s.appendChild(t)}
+s.appendChild(el('text',{x:36,y:18,'font-size':12,style:'fill:var(--graphite)'},'line plot: error at shared x'));
+// right: scatter with tolerance circles
+const X2=x=>380+280*x,Y2=y=>226-196*y;
+s.appendChild(el('text',{x:380,y:18,'font-size':12,style:'fill:var(--graphite)'},'scatter plot: hit within tolerance'));
+const G=[];for(let i=0;i<14;i++){G.push([0.08+0.84*((i*5)%14)/13,0.1+0.8*(0.5+0.5*Math.sin(i*1.7))])}
+G.forEach((g,i)=>{const r=el('circle',{cx:X2(g[0]),cy:Y2(g[1]),r:14,fill:'#2a78d6','fill-opacity':0.08,stroke:'#2a78d6','stroke-dasharray':'3 3',class:'ring'});r.style.animationDelay=(0.3+0.08*i)+'s';s.appendChild(r);
+const c=el('circle',{cx:X2(g[0]),cy:Y2(g[1]),r:3.6,fill:'#2a78d6',class:'dot'});c.style.animationDelay=(0.3+0.08*i)+'s';s.appendChild(c)});
+G.forEach((g,i)=>{const far=(i===4||i===9),dx=far?0.075:0.012*rnd(i+11),dy=far?0.06:0.012*rnd(i+23);
+const px=X2(g[0]+dx),py=Y2(g[1]+dy),hit=Math.hypot(px-X2(g[0]),py-Y2(g[1]))<=14;
+const t=el('line',{x1:X2(g[0]),y1:Y2(g[1]),x2:px,y2:py,stroke:hit?'#1D9E75':'#e34948','stroke-width':1.6,class:'tick'});t.style.animationDelay=(1.6+0.08*i)+'s';s.appendChild(t);
+const c=el('circle',{cx:px,cy:py,r:4,fill:hit?'#eb6834':'#e34948',class:'dot'});c.style.animationDelay=(1.2+0.08*i)+'s';s.appendChild(c)});
+})();</script>
+</body>
+</html>

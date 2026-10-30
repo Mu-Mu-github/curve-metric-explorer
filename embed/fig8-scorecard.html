@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One digitization, every criterion – Curve-metric explorer</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+</style>
+
+<style id="embed-style">
+body.embed header.top, body.embed main > h1, body.embed .lede, body.embed main > section, body.embed nav.pn,
+body.embed h2.sr-only, body.embed main > h2, body.embed main > p, body.embed main > ol.refs {display:none !important}
+body.embed {background:var(--panel)}
+body.embed .wrap {max-width:none; padding:6px 8px 10px}
+body.embed .ebar {display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family:var(--sans);
+  font-size:13px; color:var(--graphite); margin:0 0 6px; padding:0 2px}
+body.embed .ebar b {font-weight:600; color:var(--ink)}
+body.embed .ebar a {white-space:nowrap}
+body.embed figure {margin:0}
+body.embed .panel {border-radius:8px}
+body:not(.embed) .ebar {display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>Figure 8 of 8</span></header>
+<main>
+<h1>One digitization, every criterion</h1>
+<div class="lede"><p>No single number catches every way a digitization can be wrong. Here one figure with two series is scored by all the criteria of the previous pages at once. Each checkbox injects one defect; the table compares every score with its value for a clean digitization and marks the criteria that move. The last row is the noise floor: the same scores for two careful human annotators of the same figure.</p></div>
+<figure class="panel">
+<style>
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 10px;font-size:13px;color:var(--text-secondary)}
+.bar label{display:flex;align-items:center;gap:6px}
+.sc{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;min-width:0}
+.sc th,.sc td{padding:5px 8px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.sc th{font-weight:600;color:var(--text-secondary);font-size:12px}
+.sc td.n{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.sc td.c{font-weight:600;white-space:nowrap}
+.sc .yes{color:var(--text-danger)}
+.sc .no{color:var(--text-muted)}
+.sc .floor td{color:var(--text-secondary);font-style:italic}
+</style>
+<h2 class="sr-only">Two series with switchable defects and a scorecard of nine criteria</h2>
+<div class="bar"><span>Defects:</span>
+<label><input type="checkbox" id="dshift" checked>x-shift +0.02</label>
+<label><input type="checkbox" id="dscale">calibration scale ×1.08</label>
+<label><input type="checkbox" id="dnoise">click noise</label>
+<label><input type="checkbox" id="dtrunc">truncated at x = 0.75</label>
+<label><input type="checkbox" id="dstray">stray line</label>
+<label><input type="checkbox" id="dswap">labels swapped after the crossing</label>
+<label><input type="checkbox" id="dclick">one stray click</label>
+</div>
+<svg id="pl" viewBox="0 0 680 250" width="100%" role="img" aria-label="Two ground-truth series and their digitizations with the selected defects"></svg>
+<table class="sc" id="tab"><thead><tr><th>Criterion</th><th>Clean</th><th>Now</th><th>Noise floor</th><th>Catches it?</th></tr></thead><tbody></tbody></table>
+</figure>
+<p class="cap"><b>Figure 8.</b> Left: two ground-truth series (blue) and their digitizations (orange) with the chosen defects. Right: each criterion’s score for the clean digitization, for the current one, and whether the change exceeds the two-annotator noise floor for that criterion.</p>
+<section><h2>What to try</h2>
+<ul>
+<li>Leave only <b>x-shift</b> on. The vertical-error family (6b, NRMSE, tick error, RMS) all move, concentrated on the flank of the peak; the coverage and the derived peak height do not. The Fréchet distance moves by about the shift itself, which is the honest size of the error.</li>
+<li>Switch to <b>calibration scale ×1.08</b> alone. Everything that compares values moves by about 8%; the derived peak position passes while peak height fails; the swap diagnostic and coverage stay flat. Compare with Figure 5: pixel-space scores would not see this at all.</li>
+<li><b>Truncated at x = 0.75</b>: coverage and FPC-NRMSE collapse to failure and ECS pays a gap per missing point, while NRMSE on the overlap barely notices. The derived value at x = 0.8 cannot be read at all.</li>
+<li><b>Stray line</b>: only the criteria with max(N, M) in the denominator (6b, FPC via the line count) react; per-series errors are unchanged. <b>Labels swapped</b>: the swap diagnostic jumps while the values-only view is unchanged. <b>One stray click</b>: the Fréchet distance, the maximum, reacts far more than any mean.</li>
+<li>Tick every box. No single row is red for every defect, and no defect is caught by every row. That is the argument for reporting a small set of complementary numbers rather than one.</li>
+</ul>
+</section>
+<section><h2>How it is computed</h2>
+<div class="eq">Every score is computed as on its own page: series paired by assignment on 1 − NRMSE; CHART-Info 6b with ε = range ÷ 100 and linear extrapolation; NRMSE, Adaptive MAPE (÷ 0.85, the chart maximum) and tick error on the shared 61-point grid over the overlap; FPC image score = mean NRMSE if two series were found with coverage ≥ 0.8, else 1;
+RMS-F1 on cells keyed “series|x” at the eleven x tick labels, τ = 0.5, θ = 0.1, Hungarian matching; discrete Fréchet on the 61 points of each matched pair, maximum over pairs; ECS on the y sequences with θ = 0.01, λ = 1, averaged;
+derived quantities: peak position of G1 within ±0.01, peak height within ±5%, value of G1 at x = 0.8 within ±5%;  swap diagnostic = values-only similarity − label-aware similarity (Figure 2).</div>
+</section>
+<section><h2>Notes on this implementation</h2>
+<ul>
+<li>The noise-floor column is this demo’s construction: two synthetic annotators who add ±0.004 of independent click noise and nothing else. On real figures the floor must be measured by digitizing the same figures twice.</li>
+<li>“Catches it” is a threshold of twice the noise floor (or 0.005 where the floor is zero); it is a reading aid, not a published rule.</li>
+<li>The chart maximum used by Adaptive MAPE is the peak of G1 (about 0.85); the tick interval t = 0.04 is one fifth of the 0.2 major spacing shown on the axis.</li>
+<li>Series are synthetic: a peak on a rising baseline and a falling straight line that cross near x = 0.85; the stray line is a flat line at 0.5 with no legend label.</li>
+</ul>
+</section>
+<section><h2>References</h2>
+<ol class="refs"><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li><li>F. Ma, R. Akhtar, A. Joshi, X. Li, H. Sun, Z. Xiang, X. Chen, Y. Zhao, “LinePilot Digitizer: Line-Plot Recovery with Manual and Automatic Calibration,” arXiv:2609.19377 (2026). Introduces DigitizerBench and FPC-NRMSE.</li><li>Y. He, P. Ying, L. Cheng, K. Peng, Y. Tian, D. Deng, Y. Wu, “Making Multimodal LLMs Reliable Chart Data Extractors: A Benchmark and Training Framework,” <i>Proc. CHI 2026</i>, doi:10.1145/3772318.3790721 (arXiv:2606.29808). Introduces ExChart-Bench and Adaptive MAPE.</li><li>S. H. Song, A. A. Efat, W. Tavanapong, “Assessing Y-Axis Influence: Bias in Multimodal Language Models on Chart-to-Table Translation,” <i>Findings of ACL 2026</i>, doi:10.18653/v1/2026.findings-acl.1765. Introduces Tick-Based Error.</li><li>F. Liu, J. M. Eisenschlos, F. Piccinno, S. Krichene, C. Pang, K. Lee, M. Joshi, W. Chen, N. Collier, Y. Altun, “DePlot: One-shot visual language reasoning by plot-to-table translation,” <i>Findings of ACL 2023</i>, pp. 10381–10399, doi:10.18653/v1/2023.findings-acl.660.</li><li>G. Khalighinejad, S. Scott, O. Liu, K. L. Anderson, R. Stureborg, A. Tyagi, B. Dhingra, “MatViX: Multimodal Information Extraction from Visually Rich Articles,” <i>Proc. NAACL 2025</i>. <a href="https://matvix-bench.github.io/">matvix-bench.github.io</a></li><li>T. Berkane, M. S. Majumder, “EpiCurveBench: Evaluating VLMs on Epidemic Curve Digitization,” arXiv:2605.27195 (2026). Code: <a href="https://github.com/tberkane/EpiCurveBench">github.com/tberkane/EpiCurveBench</a></li><li>M. Ravishankara, “PlotChain: Deterministic Checkpointed Evaluation of Multimodal LLMs on Engineering Plot Reading,” arXiv:2602.13232 (2026).</li><li>D. Drevon, S. R. Fursa, A. L. Malcolm, “Intercoder Reliability and Validity of WebPlotDigitizer in Extracting Graphed Data,” <i>Behavior Modification</i> 41(2), 323–339 (2017), doi:10.1177/0145445516673998.</li><li>H. W. Kuhn, “The Hungarian method for the assignment problem,” <i>Naval Research Logistics Quarterly</i> 2, 83–97 (1955).</li></ol>
+</section>
+<nav class="pn" aria-label="Figures"><a href="fig7-loops.html">Previous: Loops and shifts: order-aware distances</a><a class="r" href="index.html">All figures</a></nav>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>const G1=x=>0.2+0.1*x+0.55*Math.exp(-(((x-0.45)/0.08)**2)),G2=x=>0.7-0.5*x;
+let XC=0.8;for(let x=0.6;x<1;x+=0.001)if(Math.abs(G1(x)-G2(x))<Math.abs(G1(XC)-G2(XC)))XC=x;
+const K=61,GX=[];for(let k=0;k<K;k++)GX.push(k/(K-1));
+const GT=[{name:'G1',f:G1},{name:'G2',f:G2}];
+function digitize(d){const out=[];[0,1].forEach(i=>{const pts=[];const xe=d.trunc?0.75:1;for(let k=0;k<K;k++){const x=GX[k];if(x>xe+1e-9)break;let src=i;if(d.swap&&x>XC)src=1-i;let y=GT[src].f(x-(d.shift?0.02:0));if(d.scale)y*=1.08;if(d.noise)y+=0.012*rnd(k+17*i);if(d.click&&i===0&&k===18)y+=0.25;pts.push([x,y])}out.push({label:GT[i].name,pts:pts})});if(d.stray)out.push({label:'',pts:GX.map(x=>[x,0.5])});return out}
+function hungarian(a){const n=a.length,INF=1e9,u=new Array(n+1).fill(0),v=new Array(n+1).fill(0),p=new Array(n+1).fill(0),way=new Array(n+1).fill(0);for(let i=1;i<=n;i++){p[0]=i;let j0=0;const minv=new Array(n+1).fill(INF),used=new Array(n+1).fill(false);do{used[j0]=true;const i0=p[j0];let delta=INF,j1=0;for(let j=1;j<=n;j++)if(!used[j]){const cur=a[i0-1][j-1]-u[i0]-v[j];if(cur<minv[j]){minv[j]=cur;way[j]=j0}if(minv[j]<delta){delta=minv[j];j1=j}}for(let j=0;j<=n;j++){if(used[j]){u[p[j]]+=delta;v[j]-=delta}else minv[j]-=delta}j0=j1}while(p[j0]!==0);do{const j1=way[j0];p[j0]=p[j1];j0=j1}while(j0)}const res=[];for(let j=1;j<=n;j++)res.push([p[j]-1,j-1]);return res}
+function frechet(A,B){const n=A.length,m=B.length,D=[];for(let i=0;i<n;i++){D.push(new Array(m));for(let j=0;j<m;j++){const d=Math.hypot(A[i][0]-B[j][0],A[i][1]-B[j][1]);let pr=0;if(i>0&&j>0)pr=Math.min(D[i-1][j],D[i][j-1],D[i-1][j-1]);else if(i>0)pr=D[i-1][j];else if(j>0)pr=D[i][j-1];D[i][j]=Math.max(d,pr)}}return D[n-1][m-1]}
+function ecs(P,T,th){const M=P.length,N=T.length,cost=(p,t)=>{const d=Math.abs(p-t);return d<=th?d:1},C=[];for(let i=0;i<=M;i++)C.push(new Array(N+1).fill(0));for(let i=1;i<=M;i++)C[i][0]=i;for(let j=1;j<=N;j++)C[0][j]=j;for(let i=1;i<=M;i++)for(let j=1;j<=N;j++)C[i][j]=Math.min(C[i-1][j-1]+cost(P[i-1],T[j-1]),C[i-1][j]+1,C[i][j-1]+1);let i=M,j=N,nm=0,ng=0;while(i>0||j>0){if(i>0&&j>0&&Math.abs(C[i][j]-(C[i-1][j-1]+cost(P[i-1],T[j-1])))<1e-9){nm++;i--;j--}else if(i>0&&Math.abs(C[i][j]-(C[i-1][j]+1))<1e-9){ng++;i--}else{ng++;j--}}return 1-C[M][N]/(nm+ng)}
+const lev=(a,b)=>{const m=a.length,n=b.length,d=[];for(let i=0;i<=m;i++){d.push([i]);for(let j=1;j<=n;j++)d[i][j]=i?0:j}for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]};
+function score(D){const yr=1,eps=0.01;const n=Math.max(2,D.length);
+const S=[],over=[];for(let i=0;i<2;i++){S.push([]);over.push([]);for(let j=0;j<D.length;j++){const P=D[j].pts,x0=P[0][0],x1=P[P.length-1][0];let s=0,c=0;for(let k=0;k<K;k++){const x=GX[k];if(x<x0-1e-9||x>x1+1e-9)continue;const d=ip(P,x)-GT[i].f(x);s+=d*d;c++}S[i].push(c?Math.max(0,1-Math.sqrt(s/c)/yr):0);over[i].push(c/K)}}
+const C=[];for(let i=0;i<n;i++){C.push([]);for(let j=0;j<n;j++)C[i].push(i<2&&j<D.length?1-S[i][j]:1)}const A=hungarian(C).filter(q=>q[0]<2&&q[1]<D.length);
+const pairs=A.map(q=>({g:GT[q[0]],p:D[q[1]],cov:over[q[0]][q[1]]}));
+let ci=0;pairs.forEach(pr=>{const P=pr.p.pts;let r=0;for(let k=0;k<K;k++){const u=GX[k],l=k===0?0:(GX[k-1]+u)/2,rr=k===K-1?1:(u+GX[k+1])/2,v=pr.g.f(u);const a=P[0],b=P[1],c=P[P.length-2],e=P[P.length-1];let yh;if(u<a[0])yh=a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0]);else if(u>e[0])yh=e[1]+(e[1]-c[1])*(u-e[0])/(e[0]-c[0]);else yh=ip(P,u);r+=(rr-l)*(1-Math.min(1,Math.abs(v-yh)/(Math.abs(v)+eps)))}ci+=r});ci/=Math.max(2,D.length);
+let nr=0,mape=0,tbe=0,cnt=0,cov=1,fr=0,ec=0,mx=0;pairs.forEach(pr=>{const P=pr.p.pts;let s=0,c=0;const t=0.04;for(let k=0;k<K;k++){const x=GX[k];if(x>P[P.length-1][0]+1e-9)continue;const d=ip(P,x)-pr.g.f(x);s+=d*d;c++;mape+=Math.min(1,Math.abs(d)/0.85);tbe+=Math.min(1,Math.abs(d)/t);cnt++;mx=Math.max(mx,pr.g.f(x))}nr+=Math.sqrt(s/c)/yr;cov=Math.min(cov,pr.cov);
+const A2=GX.map(x=>[x,pr.g.f(x)]);fr=Math.max(fr,frechet(A2,P));ec+=ecs(P.map(q=>q[1]),GX.map(x=>pr.g.f(x)),0.01)});
+const np=Math.max(1,pairs.length);nr/=np;mape=100*mape/Math.max(1,cnt);tbe/=Math.max(1,cnt);ec/=np;
+const fpc=(D.length===2&&cov>=0.8&&nr<1)?nr:1;
+const cells=(src,isGT)=>{const out=[];src.forEach(s=>{for(let k=0;k<=10;k++){const x=k/10;if(isGT)out.push({key:s.name+'|'+x.toFixed(1),v:s.f(x)});else{const P=s.pts;if(x<=P[P.length-1][0]+1e-9&&s.label)out.push({key:s.label+'|'+x.toFixed(1),v:ip(P,x)})}}});return out};
+const gc=cells(GT,true),pc=cells(D,false),m=Math.max(gc.length,pc.length),CM=[];for(let i=0;i<m;i++){CM.push([]);for(let j=0;j<m;j++){if(i<gc.length&&j<pc.length){const nl=lev(gc[i].key,pc[j].key)/Math.max(gc[i].key.length,pc[j].key.length),sk=nl<=0.5?1-nl:0,re=Math.abs(pc[j].v-gc[i].v)/Math.abs(gc[i].v),sv=re<=0.1?1-re:0;CM[i].push(1-sk*sv)}else CM[i].push(1)}}
+let rs=0;hungarian(CM).forEach(q=>{if(q[0]<gc.length&&q[1]<pc.length)rs+=1-CM[q[0]][q[1]]});const rp=pc.length?rs/pc.length:0,rr=rs/gc.length,rf=rp+rr?2*rp*rr/(rp+rr):0;
+const d1=D.find(s=>s.label==='G1'),P1=d1?d1.pts:null;let px=0,py=0;if(P1)P1.forEach(q=>{if(q[1]>py){py=q[1];px=q[0]}});let gpx=0,gpy=0;GX.forEach(x=>{if(G1(x)>gpy){gpy=G1(x);gpx=x}});
+const v08=P1&&P1[P1.length-1][0]>=0.8?ip(P1,0.8):NaN;let pass=0;if(Math.abs(px-gpx)<=0.01)pass++;if(Math.abs(py-gpy)/gpy<=0.05)pass++;if(!isNaN(v08)&&Math.abs(v08-G1(0.8))/G1(0.8)<=0.05)pass++;
+let lab=0;D.forEach(s=>{const gi=GT.findIndex(g=>g.name===s.label);if(gi>=0){const P=s.pts;let ss=0,c=0;for(let k=0;k<K;k++){const x=GX[k];if(x>P[P.length-1][0]+1e-9)continue;const d=ip(P,x)-GT[gi].f(x);ss+=d*d;c++}lab+=c?Math.max(0,1-Math.sqrt(ss/c)):0}});lab/=2;
+let vo=0,vc=0;for(let k=0;k<K;k++){const x=GX[k],gv=GT.map(g=>g.f(x)).sort((a,b)=>a-b),pv=D.filter(s=>s.label&&x<=s.pts[s.pts.length-1][0]+1e-9).map(s=>ip(s.pts,x)).sort((a,b)=>a-b);if(!pv.length)continue;const nn=Math.min(gv.length,pv.length);let s=0;for(let i=0;i<nn;i++)s+=Math.abs(gv[i]-pv[i]);vo+=Math.max(0,1-s/nn);vc++}vo=vc?vo/vc:0;
+return [ci,nr,cov,fpc,mape,tbe,rf,fr,ec,pass,vo-lab]}
+const ROWS=[['CHART-Info 6b (ε variant, ÷ max N)','s',3],['NRMSE on the overlap (÷ range)','e',3],['Coverage (min over series)','s',2],['FPC-NRMSE image score','e',3],['Adaptive MAPE (%)','e',2],['Mean tick-based error (t = 0.04)','e',3],['RMS-F1 at the 11 tick labels','s',3],['Fréchet distance (max over series)','e',3],['ECS by sequence (θ = 1%)','s',3],['Derived quantities passed (of 3)','s',0],['Swap diagnostic (values-only − label-aware)','e',3]];
+const none={shift:false,scale:false,noise:false,trunc:false,stray:false,swap:false,click:false};
+const clean=score(digitize(none));
+const annA=digitize(none).map(s=>({label:s.label,pts:s.pts.map((q,k)=>[q[0],q[1]+0.004*rnd(k+301)])})),annB=digitize(none).map(s=>({label:s.label,pts:s.pts.map((q,k)=>[q[0],q[1]+0.004*rnd(k+601)])}));
+const sA=score(annA),sB=score(annB);const floor=sA.map((v,i)=>Math.max(Math.abs(v-clean[i]),Math.abs(sB[i]-clean[i]),Math.abs(sA[i]-sB[i])));
+function draw(){const d={shift:$('dshift').checked,scale:$('dscale').checked,noise:$('dnoise').checked,trunc:$('dtrunc').checked,stray:$('dstray').checked,swap:$('dswap').checked,click:$('dclick').checked};
+const D=digitize(d),now=score(D);
+const svg=$('pl');svg.innerHTML='';const X=x=>50+610*x,Y=y=>222-190*y;
+for(let k=0;k<=5;k++){const yv=k/5;svg.appendChild(el('line',{x1:50,x2:660,y1:Y(yv),y2:Y(yv),style:'stroke:var(--border)'}));svg.appendChild(el('text',{x:44,y:Y(yv)+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},yv.toFixed(1)))}
+for(let k=0;k<=10;k++){svg.appendChild(el('line',{x1:X(k/10),x2:X(k/10),y1:222,y2:226,style:'stroke:var(--border-strong)'}));if(k%2===0)svg.appendChild(el('text',{x:X(k/10),y:240,'text-anchor':'middle','font-size':11,style:'fill:var(--text-muted)'},(k/10).toFixed(1)))}
+GT.forEach(g=>{svg.appendChild(el('path',{d:GX.map((x,k)=>(k?'L':'M')+X(x).toFixed(1)+' '+Y(g.f(x)).toFixed(1)).join(''),fill:'none',stroke:'#2a78d6','stroke-width':2}));svg.appendChild(el('text',{x:X(1)+4,y:Y(g.f(1))+4,'font-size':11,style:'fill:#2a78d6'},g.name))});
+D.forEach(s=>{svg.appendChild(el('path',{d:s.pts.map((q,k)=>(k?'L':'M')+X(q[0]).toFixed(1)+' '+Y(q[1]).toFixed(1)).join(''),fill:'none',stroke:'#eb6834','stroke-width':2,'stroke-dasharray':'5 4'}))});
+if(d.swap){svg.appendChild(el('line',{x1:X(XC),x2:X(XC),y1:20,y2:222,stroke:'#e34948','stroke-width':1,'stroke-dasharray':'3 3'}));svg.appendChild(el('text',{x:X(XC),y:14,'text-anchor':'middle','font-size':11,style:'fill:var(--text-danger)'},'labels swapped beyond x = '+XC.toFixed(2)))}
+const tb=$('tab').querySelector('tbody');tb.innerHTML='';
+ROWS.forEach((r,i)=>{const tr=document.createElement('tr');const delta=now[i]-clean[i],mv=Math.abs(delta)>Math.max(floor[i]*2,r[2]===0?0.5:(i===10?0.05:0.005));const fmt=v=>r[2]===0?String(v):v.toFixed(r[2]);
+tr.innerHTML='<td>'+r[0]+'</td><td class="n">'+fmt(clean[i])+'</td><td class="n">'+fmt(now[i])+'</td><td class="n">±'+(r[2]===0?'0':floor[i].toFixed(3))+'</td><td class="c '+(mv?'yes':'no')+'">'+(mv?((r[1]==='s'&&delta<0)||(r[1]==='e'&&delta>0)?'yes, worse':'moved'):'no')+'</td>';tb.appendChild(tr)});
+const fl=document.createElement('tr');fl.className='floor';fl.innerHTML='<td colspan="5">Noise floor: the largest change in each score between a clean digitization and two annotators with ±0.004 click noise, or between the two annotators. A criterion “catches” a defect when it moves by more than twice that.</td>';tb.appendChild(fl);
+}
+['dshift','dscale','dnoise','dtrunc','dstray','dswap','dclick'].forEach(id=>$(id).addEventListener('change',draw));
+draw();</script>
+
+<script id="embed-script">
+(function(){
+  var PRESET = {"dshift": "1"};
+  var FULL = "../fig8-scorecard.html";
+  var TITLE = "One digitization, every criterion";
+  function apply(q){
+    Object.keys(q).forEach(function(k){
+      var v = q[k];
+      if (k === 'focus') return;
+      if (k === 'btn') {
+        var b = document.querySelector('button[data-m="'+v+'"],button[data-b="'+v+'"]');
+        if (b) b.click();
+        return;
+      }
+      var el = document.getElementById(k); if (!el) return;
+      if (el.type === 'checkbox') { el.checked = (v === '1'); }
+      else { el.value = v; }
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      el.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+  }
+  window.addEventListener('load', function(){
+    try {
+      var hash = {}; new URLSearchParams(location.hash.slice(1)).forEach(function(v,k){ hash[k]=v; });
+      var focus = hash.focus !== '0';
+      if (focus) {
+        document.body.classList.add('embed');
+        var main = document.querySelector('main') || document.body;
+        var bar = document.createElement('div'); bar.className = 'ebar';
+        bar.innerHTML = '<span><b>' + TITLE + '</b></span>' +
+                        '<a href="' + FULL + '" target="_blank" rel="noopener">Full page with the explanation \u2197</a>';
+        main.insertBefore(bar, main.firstChild);
+      }
+      var state = {}; Object.keys(PRESET).forEach(function(k){ state[k]=PRESET[k]; });
+      Object.keys(hash).forEach(function(k){ state[k]=hash[k]; });
+      apply(state);
+      window.scrollTo(0, 0);
+    } catch (e) { if (window.console) console.error(e); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line plots: error on a shared grid, and what you divide by – Curve-metric explorer</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+</style>
+
+<style id="embed-style">
+body.embed header.top, body.embed main > h1, body.embed .lede, body.embed main > section, body.embed nav.pn,
+body.embed h2.sr-only, body.embed main > h2, body.embed main > p, body.embed main > ol.refs {display:none !important}
+body.embed {background:var(--panel)}
+body.embed .wrap {max-width:none; padding:6px 8px 10px}
+body.embed .ebar {display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family:var(--sans);
+  font-size:13px; color:var(--graphite); margin:0 0 6px; padding:0 2px}
+body.embed .ebar b {font-weight:600; color:var(--ink)}
+body.embed .ebar a {white-space:nowrap}
+body.embed figure {margin:0}
+body.embed .panel {border-radius:8px}
+body:not(.embed) .ebar {display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>Figure 3 of 8</span></header>
+<main>
+<h1>Line plots: error on a shared grid, and what you divide by</h1>
+<div class="lede"><p>For a line plot every common metric does the same two things first: it reads both curves at the same x positions, after linear interpolation, and takes the vertical difference there. The metrics part company at the next step, the normalizer. CHART-Info and RMS divide by the value itself, FPC-NRMSE and ECS by the y-range, Adaptive MAPE by the chart maximum, and Tick-Based Error by the minor tick interval. Apply a constant vertical offset and watch which of them treats the flat start of the curve differently from its top.</p></div>
+<figure class="panel">
+<style>
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.bar button.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary)}
+.row input{flex:1;min-width:0}
+.v{min-width:46px;text-align:right;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:12px 0 4px}
+.card{background:var(--surface-1);border-radius:var(--radius);padding:10px 12px}
+.card .l{font-size:12px;color:var(--text-secondary)}
+.card .n{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.card .s{font-size:11px;color:var(--text-muted)}
+</style>
+<h2 class="sr-only">A rising curve and its digitization, the per-position error under a selectable normalizer, and four aggregate scores</h2>
+<div class="bar" id="modes"><span style="font-size:13px;color:var(--text-secondary)">Divide by:</span><button data-m="val" class="on">the value (CHART-Info, RMS)</button><button data-m="range">the y-range (FPC-NRMSE, ECS)</button><button data-m="max">the chart maximum (Adaptive MAPE)</button><button data-m="tick">the minor tick (TBE)</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--text-secondary);margin-bottom:4px">
+<span style="display:flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#2a78d6" stroke-width="2"/></svg>Ground truth</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#eb6834" stroke-width="2" stroke-dasharray="4 3"/></svg>Digitized</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#e34948" stroke-width="2"/></svg>Vertical difference</span>
+</div>
+<svg id="pl" viewBox="0 0 680 330" width="100%" role="img" aria-label="Upper: the two curves with red vertical differences. Lower strip: normalized error per grid position with the cap at 1"></svg>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px 24px;margin-top:8px">
+<label class="row">Vertical offset<input type="range" id="off" min="-0.4" max="0.4" step="0.02" value="0.1"><span class="v" id="offv"></span></label>
+<label class="row">x-shift<input type="range" id="dx" min="-0.04" max="0.04" step="0.002" value="0.006"><span class="v" id="dxv"></span></label>
+<label class="row">Click noise<input type="range" id="nz" min="0" max="0.3" step="0.01" value="0.04"><span class="v" id="nzv"></span></label>
+<label class="row">Major tick spacing<input type="range" id="tk" min="1" max="4" step="1" value="2"><span class="v" id="tkv"></span></label>
+</div>
+<div class="cards">
+<div class="card"><div class="l">CHART-Info recall</div><div class="n" id="c1">-</div><div class="s">÷ value, capped, interval-weighted</div></div>
+<div class="card"><div class="l">NRMSE</div><div class="n" id="c2">-</div><div class="s">÷ y-range (FPC-NRMSE)</div></div>
+<div class="card"><div class="l">Adaptive MAPE</div><div class="n" id="c3">-</div><div class="s">÷ chart maximum</div></div>
+<div class="card"><div class="l">Mean TBE</div><div class="n" id="c4">-</div><div class="s">in minor ticks, capped at 1</div></div>
+<div class="card"><div class="l">Within 5% of value</div><div class="n" id="c5">-</div><div class="s">hit rate</div></div>
+<div class="card"><div class="l">Within one minor tick</div><div class="n" id="c6">-</div><div class="s">hit rate</div></div>
+</div>
+</figure>
+<p class="cap"><b>Figure 3.</b> A polarization-like curve rising from 0.02 to 8 mA cm⁻² (blue) and its digitization (orange). Red bars mark the vertical difference at every tenth grid position. The strip below shows the per-position error under the selected normalizer, capped at 1; the cards give the aggregates of all four at once.</p>
+<section><h2>What to try</h2>
+<ul>
+<li>Keep the default offset of +0.1 and switch between the four normalizers. Dividing by the value saturates at the cap along the whole flat start, where the current is only 0.02: a constant miss of 0.1 is 500% of the value there and 1% of the value at the top. The three other normalizers show a flat strip, because the miss is the same everywhere.</li>
+<li>Set the offset to 0 and the x-shift to +0.03. Now every normalizer concentrates the error on the steep part of the curve, where a small horizontal shift becomes a large vertical one. Vertical-difference metrics cannot tell a shift from a value error; Figure 7 shows the alternative.</li>
+<li>Change the major tick spacing from 2 to 4. Nothing in the curves changes, yet the TBE card and the “within one minor tick” card both improve: the tick-based tolerance follows the chart’s own granularity, which is its purpose and also its caveat.</li>
+<li>Raise the click noise with the offset at 0. The “within 5% of the value” card collapses first at the low end, where 5% of 0.02 is a few thousandths; the “within one tick” card is indifferent to where the noise sits.</li>
+</ul>
+</section>
+<section><h2>How it is computed</h2>
+<div class="eq">Both curves are read at K = 610 positions, one per horizontal plot pixel (FPC-NRMSE convention), by linear interpolation; Δₖ = ŷₖ − yₖ.
+CHART-Info recall:  Σᵢ (1 − min(1, |Δ(uᵢ)| ÷ |y(uᵢ)|)) · Intervalᵢ ÷ (uₘ − u₁) at the 17 ground-truth points uᵢ
+NRMSE:  √(mean Δₖ²) ÷ (yₘₐₓ − yₘᵢₙ)        (the e of FPC-NRMSE)
+Adaptive MAPE:  100 · mean |Δₖ| ÷ max|y|,   each term capped at 100%
+Tick-Based Error:  mean min(1, |Δₖ| ÷ t),   t = major tick interval ÷ 5
+Hit rates:  fraction of positions with |Δₖ| ≤ 0.05 |yₖ|, and with |Δₖ| ≤ t</div>
+</section>
+<section><h2>Notes on this implementation</h2>
+<ul>
+<li>The ground truth is a synthetic sigmoid from 0.02 to 8; the digitized curve is the same function shifted, offset and jittered, clipped at zero. Values are read on a pixel-column grid over the full range, so coverage is complete here; Figure 6 treats partial coverage.</li>
+<li>Adaptive MAPE is defined for table cells and divides by the largest absolute ground-truth value of the chart; applied to a curve sampled on a grid, as here, it is the range-normalized MAE whenever the minimum is near zero. ExChart’s code normalizes scatter x and y separately.</li>
+<li>Tick-Based Error is defined inside the RMS table matching; its estimate t = major interval ÷ 5 is used here directly on grid positions.</li>
+<li>The hit-rate cards use positions on the grid, not points, so they weight every stretch of x equally.</li>
+</ul>
+</section>
+<section><h2>References</h2>
+<ol class="refs"><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li><li>F. Ma, R. Akhtar, A. Joshi, X. Li, H. Sun, Z. Xiang, X. Chen, Y. Zhao, “LinePilot Digitizer: Line-Plot Recovery with Manual and Automatic Calibration,” arXiv:2609.19377 (2026). Introduces DigitizerBench and FPC-NRMSE.</li><li>Y. He, P. Ying, L. Cheng, K. Peng, Y. Tian, D. Deng, Y. Wu, “Making Multimodal LLMs Reliable Chart Data Extractors: A Benchmark and Training Framework,” <i>Proc. CHI 2026</i>, doi:10.1145/3772318.3790721 (arXiv:2606.29808). Introduces ExChart-Bench and Adaptive MAPE.</li><li>S. H. Song, A. A. Efat, W. Tavanapong, “Assessing Y-Axis Influence: Bias in Multimodal Language Models on Chart-to-Table Translation,” <i>Findings of ACL 2026</i>, doi:10.18653/v1/2026.findings-acl.1765. Introduces Tick-Based Error.</li><li>M. P. Polak, D. Morgan, “Leveraging Vision Capabilities of Multimodal LLMs for Automated Data Extraction from Plots,” arXiv:2503.12326 (2025). Data: <a href="https://doi.org/10.6084/m9.figshare.28559639">doi.org/10.6084/m9.figshare.28559639</a></li><li>T. Berkane, M. S. Majumder, “EpiCurveBench: Evaluating VLMs on Epidemic Curve Digitization,” arXiv:2605.27195 (2026). Code: <a href="https://github.com/tberkane/EpiCurveBench">github.com/tberkane/EpiCurveBench</a></li></ol>
+</section>
+<nav class="pn" aria-label="Figures"><a href="fig2-pairing.html">Previous: Pairing series one-to-one: recall, precision and swapped labels</a><a class="r" href="fig4-scatter.html">Next: Scatter plots: a hit within tolerance, and the tolerance ladder</a></nav>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>const f=x=>0.02+7.98/(1+Math.exp(-(x-0.58)/0.075));
+const YMAX=8,W=610,X=x=>50+W*x,Y=y=>218-196*y/YMAX,YS=e=>318-80*Math.min(1,e);
+let mode='val';
+const GX=[];for(let i=0;i<=16;i++)GX.push(i/16);
+function pred(){const off=+$('off').value,dx=+$('dx').value,nz=+$('nz').value,P=[];for(let i=0;i<=40;i++){const x=i/40;P.push([x,Math.max(0,f(x-dx)+off+nz*rnd(i+7))])}return P}
+function draw(){const off=+$('off').value,dx=+$('dx').value,nz=+$('nz').value,tk=+$('tk').value,t=tk/5;
+$('offv').textContent=(off>=0?'+':'')+off.toFixed(2);$('dxv').textContent=(dx>=0?'+':'')+dx.toFixed(3);$('nzv').textContent=nz.toFixed(2);$('tkv').textContent=tk+' → t = '+t.toFixed(1);
+const P=pred(),K=W,errs=[];let s2=0,sa=0,h5=0,ht=0;
+for(let k=0;k<K;k++){const x=(k+0.5)/K,y=f(x),yh=ip(P,x),d=Math.abs(yh-y);errs.push({x:x,y:y,d:d});s2+=d*d;sa+=d;if(d/Math.abs(y)<=0.05)h5++;if(d<=t)ht++}
+const nrmse=Math.sqrt(s2/K)/(YMAX-0.02),mape=100*sa/K/YMAX;
+let rec=0;GX.forEach((u,i)=>{const l=i===0?0:(GX[i-1]+u)/2,r=i===16?1:(u+GX[i+1])/2,v=f(u);rec+=(r-l)*(1-Math.min(1,Math.abs(v-ip(P,u))/Math.abs(v)))});
+let tbe=0;errs.forEach(e=>tbe+=Math.min(1,e.d/t));tbe/=K;
+const norm=e=>mode==='val'?e.d/Math.abs(e.y):mode==='range'?e.d/(YMAX-0.02):mode==='max'?e.d/YMAX:e.d/t;
+const svg=$('pl');svg.innerHTML='';
+for(let yv=0;yv<=YMAX;yv+=tk){svg.appendChild(el('line',{x1:50,x2:660,y1:Y(yv),y2:Y(yv),style:'stroke:var(--border)'}));svg.appendChild(el('text',{x:44,y:Y(yv)+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},yv));for(let m=1;m<5;m++){const ym=yv+m*t;if(ym<YMAX)svg.appendChild(el('line',{x1:50,x2:56,y1:Y(ym),y2:Y(ym),style:'stroke:var(--border-strong)'}))}}
+svg.appendChild(el('text',{x:50,y:14,'font-size':11,style:'fill:var(--text-muted)'},'j (mA cm⁻²); major ticks every '+tk+', minor tick t = '+t.toFixed(1)));
+let gp='';for(let i=0;i<=300;i++){const x=i/300;gp+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(f(x)).toFixed(1)}
+svg.appendChild(el('path',{d:gp,fill:'none',stroke:'#2a78d6','stroke-width':2}));
+svg.appendChild(el('path',{d:P.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(''),fill:'none',stroke:'#eb6834','stroke-width':2,'stroke-dasharray':'5 4'}));
+for(let k=5;k<K;k+=20){const e=errs[k];svg.appendChild(el('line',{x1:X(e.x),x2:X(e.x),y1:Y(e.y),y2:Y(e.y+(ip(P,e.x)-e.y)),stroke:'#e34948','stroke-width':1.6}))}
+svg.appendChild(el('text',{x:50,y:236,'font-size':11,style:'fill:var(--text-secondary)'},'normalized error per grid position ('+(mode==='val'?'|Δ| ÷ |y|':mode==='range'?'|Δ| ÷ y-range':mode==='max'?'|Δ| ÷ chart maximum':'|Δ| ÷ minor tick t')+'), capped at 1'));
+svg.appendChild(el('line',{x1:50,x2:660,y1:YS(1),y2:YS(1),style:'stroke:var(--border-strong)','stroke-dasharray':'3 3'}));svg.appendChild(el('text',{x:44,y:YS(1)+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},'1'));
+svg.appendChild(el('line',{x1:50,x2:660,y1:YS(0),y2:YS(0),style:'stroke:var(--border)'}));svg.appendChild(el('text',{x:44,y:YS(0)+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},'0'));
+for(let k=0;k<K;k+=2){const e=errs[k],n=norm(e);svg.appendChild(el('rect',{x:X(e.x)-1,y:YS(n),width:2,height:YS(0)-YS(n),fill:n>=1?'#e34948':'#D85A30','fill-opacity':0.8}))}
+$('c1').textContent=rec.toFixed(3);$('c2').textContent=nrmse.toFixed(3);$('c3').textContent=mape.toFixed(2)+'%';$('c4').textContent=tbe.toFixed(3);$('c5').textContent=Math.round(100*h5/K)+'%';$('c6').textContent=Math.round(100*ht/K)+'%';
+}
+['off','dx','nz','tk'].forEach(id=>$(id).addEventListener('input',draw));
+document.querySelectorAll('#modes button').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.m;document.querySelectorAll('#modes button').forEach(o=>o.classList.toggle('on',o===b));draw()}));
+draw();</script>
+
+<script id="embed-script">
+(function(){
+  var PRESET = {"btn": "range", "off": "-0.4"};
+  var FULL = "../fig3-line-error.html";
+  var TITLE = "Line error on a shared grid, and what you divide by";
+  function apply(q){
+    Object.keys(q).forEach(function(k){
+      var v = q[k];
+      if (k === 'focus') return;
+      if (k === 'btn') {
+        var b = document.querySelector('button[data-m="'+v+'"],button[data-b="'+v+'"]');
+        if (b) b.click();
+        return;
+      }
+      var el = document.getElementById(k); if (!el) return;
+      if (el.type === 'checkbox') { el.checked = (v === '1'); }
+      else { el.value = v; }
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      el.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+  }
+  window.addEventListener('load', function(){
+    try {
+      var hash = {}; new URLSearchParams(location.hash.slice(1)).forEach(function(v,k){ hash[k]=v; });
+      var focus = hash.focus !== '0';
+      if (focus) {
+        document.body.classList.add('embed');
+        var main = document.querySelector('main') || document.body;
+        var bar = document.createElement('div'); bar.className = 'ebar';
+        bar.innerHTML = '<span><b>' + TITLE + '</b></span>' +
+                        '<a href="' + FULL + '" target="_blank" rel="noopener">Full page with the explanation \u2197</a>';
+        main.insertBefore(bar, main.firstChild);
+      }
+      var state = {}; Object.keys(PRESET).forEach(function(k){ state[k]=PRESET[k]; });
+      Object.keys(hash).forEach(function(k){ state[k]=hash[k]; });
+      apply(state);
+      window.scrollTo(0, 0);
+    } catch (e) { if (window.console) console.error(e); }
+  });
+})();
+</script>
+</body>
+</html>

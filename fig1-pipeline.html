@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Six decisions behind every curve score – Curve-metric explorer</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>Figure 1 of 8</span></header>
+<main>
+<h1>Six decisions behind every curve score</h1>
+<div class="lede"><p>Every published score for a digitized line or scatter plot is a sequence of six decisions. Benchmarks differ less in their arithmetic than in which option they take at each step. Pick a benchmark to see its path through the six cards; the sketches redraw to show its choice.</p></div>
+<figure class="panel">
+<style>
+.bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.bar button.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.gp{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:10px}
+.pc{background:var(--surface-1);border-radius:10px;padding:10px 12px 12px}
+.pc .t{font-size:14px;font-weight:600;color:var(--text-primary);margin-top:6px}
+.pc .q{font-size:12px;color:var(--text-secondary);line-height:1.45;min-height:34px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--panel);border:1px solid var(--rule);color:var(--text-secondary);line-height:1.5}
+.chip.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent);font-weight:600}
+.note{margin-top:10px;font-size:13px;color:var(--text-secondary);min-height:20px}
+</style>
+<h2 class="sr-only">Six cards, one per decision in a curve metric, each with a sketch and the options benchmarks choose</h2>
+<div class="bar" id="bm"><span style="font-size:13px;color:var(--text-secondary);margin-right:4px">Benchmark:</span>
+<button data-b="ci" class="on">CHART-Info 6b</button><button data-b="fpc">FPC-NRMSE</button><button data-b="pe">PlotExtract</button><button data-b="p2s">Plot2Spectra</button><button data-b="sc">Scatteract</button><button data-b="cis">CHART-Info scatter</button><button data-b="rms">RMS (DePlot)</button><button data-b="mape">Adaptive MAPE</button><button data-b="tbe">TBE</button><button data-b="ecs">ECS</button><button data-b="fr">Fréchet (MatViX)</button>
+</div>
+<div class="gp">
+<div class="pc"><svg id="s1" viewBox="0 0 200 110" width="100%" role="img" aria-label="Pairing sketch"></svg><div class="t">1. Pair</div><div class="q">Which digitized series or point is compared with which ground-truth one?</div><div class="chips" id="o1"></div></div>
+<div class="pc"><svg id="s2" viewBox="0 0 200 110" width="100%" role="img" aria-label="Sampling sketch"></svg><div class="t">2. Sample</div><div class="q">At which positions are the two compared?</div><div class="chips" id="o2"></div></div>
+<div class="pc"><svg id="s3" viewBox="0 0 200 110" width="100%" role="img" aria-label="Measuring sketch"></svg><div class="t">3. Measure</div><div class="q">How is one difference measured?</div><div class="chips" id="o3"></div></div>
+<div class="pc"><svg id="s4" viewBox="0 0 200 110" width="100%" role="img" aria-label="Normalizing sketch"></svg><div class="t">4. Normalize</div><div class="q">What is the difference divided by?</div><div class="chips" id="o4"></div></div>
+<div class="pc"><svg id="s5" viewBox="0 0 200 110" width="100%" role="img" aria-label="Aggregating sketch"></svg><div class="t">5. Aggregate</div><div class="q">How do many differences become one number?</div><div class="chips" id="o5"></div></div>
+<div class="pc"><svg id="s6" viewBox="0 0 200 110" width="100%" role="img" aria-label="Missing-data sketch"></svg><div class="t">6. Missing data</div><div class="q">What happens where only one side has data?</div><div class="chips" id="o6"></div></div>
+</div>
+<div class="note" id="note"></div>
+</figure>
+<p class="cap"><b>Figure 1.</b> Each card is one decision; the chips are the options found in the literature and the highlighted chip is the selected benchmark’s choice. The sketches use the same synthetic curve throughout: a peak on a sloping baseline (blue) and a digitization shifted by 4% of the x-range (orange).</p>
+<section><h2>What to try</h2>
+<ul>
+<li>Click <b>CHART-Info 6b</b> and then <b>FPC-NRMSE</b>. Both pair series one-to-one and measure vertical differences, but one samples at the ground-truth points and divides by the value, the other samples every pixel column and divides by the y-range; and only one of them penalizes a curve that stops early.</li>
+<li>Compare <b>Scatteract</b> with <b>CHART-Info scatter</b>: the same point sets, but a fixed 2% circle on one side and a covariance-scaled distance with an assignment step on the other.</li>
+<li>Click <b>RMS</b>, <b>Adaptive MAPE</b> and <b>TBE</b> in turn. They share the table key-value matching and differ only in card 4, the normalizer, which is the whole argument of the 2026 papers that introduced the last two.</li>
+<li>Click <b>ECS</b> and <b>Fréchet</b>: the two order-aware methods, which are the only ones here that work for curves that are not functions of x.</li>
+</ul>
+</section>
+<section><h2>How it is computed</h2>
+<div class="eq">A curve score is a composition: pair → sample → measure → normalize → aggregate, with a rule for missing data applied at the pairing or sampling step.
+Most benchmarks take the same option at step 1 (one-to-one assignment, normalized by max(N_GT, N_pred)) and at step 3 (a vertical difference for lines, a Euclidean or Mahalanobis distance for points).
+They differ mainly at steps 2, 4 and 6, and that is where the figures that follow spend their time.</div>
+</section>
+<section><h2>Notes on this implementation</h2>
+<ul>
+<li>The chips name the options found in the literature reviewed for this collection; a benchmark’s chip is the option its paper or scorer describes, simplified to one phrase. Card 1 for RMS, Adaptive MAPE and TBE reads “by table key” because those metrics match cells by their headers before comparing values.</li>
+<li>Plot2Spectra’s “hit rate” is a threshold on the mean pixel distance of a whole line, not on single points.</li>
+<li>In card 4 the two example misses are both 0.8 units on a 0 to 10 axis; the labels show what each normalizer makes of them.</li>
+</ul>
+</section>
+<section><h2>References</h2>
+<ol class="refs"><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li><li>F. Ma, R. Akhtar, A. Joshi, X. Li, H. Sun, Z. Xiang, X. Chen, Y. Zhao, “LinePilot Digitizer: Line-Plot Recovery with Manual and Automatic Calibration,” arXiv:2609.19377 (2026). Introduces DigitizerBench and FPC-NRMSE.</li><li>M. P. Polak, D. Morgan, “Leveraging Vision Capabilities of Multimodal LLMs for Automated Data Extraction from Plots,” arXiv:2503.12326 (2025). Data: <a href="https://doi.org/10.6084/m9.figshare.28559639">doi.org/10.6084/m9.figshare.28559639</a></li><li>W. Jiang, K. Li, T. Spreadbury, E. Schwenker, O. Cossairt, M. K. Y. Chan, “Plot2Spectra: an automatic spectra extraction tool,” <i>Digital Discovery</i> 1, 719–731 (2022), doi:10.1039/D1DD00036E. Code: <a href="https://github.com/MaterialEyes/Plot2Spec">github.com/MaterialEyes/Plot2Spec</a></li><li>M. Cliche, D. Rosenberg, D. Madeka, C. Yee, “Scatteract: Automated Extraction of Data from Scatter Plots,” <i>Proc. ECML PKDD 2017</i>.</li><li>F. Liu, J. M. Eisenschlos, F. Piccinno, S. Krichene, C. Pang, K. Lee, M. Joshi, W. Chen, N. Collier, Y. Altun, “DePlot: One-shot visual language reasoning by plot-to-table translation,” <i>Findings of ACL 2023</i>, pp. 10381–10399, doi:10.18653/v1/2023.findings-acl.660.</li><li>Y. He, P. Ying, L. Cheng, K. Peng, Y. Tian, D. Deng, Y. Wu, “Making Multimodal LLMs Reliable Chart Data Extractors: A Benchmark and Training Framework,” <i>Proc. CHI 2026</i>, doi:10.1145/3772318.3790721 (arXiv:2606.29808). Introduces ExChart-Bench and Adaptive MAPE.</li><li>S. H. Song, A. A. Efat, W. Tavanapong, “Assessing Y-Axis Influence: Bias in Multimodal Language Models on Chart-to-Table Translation,” <i>Findings of ACL 2026</i>, doi:10.18653/v1/2026.findings-acl.1765. Introduces Tick-Based Error.</li><li>T. Berkane, M. S. Majumder, “EpiCurveBench: Evaluating VLMs on Epidemic Curve Digitization,” arXiv:2605.27195 (2026). Code: <a href="https://github.com/tberkane/EpiCurveBench">github.com/tberkane/EpiCurveBench</a></li><li>G. Khalighinejad, S. Scott, O. Liu, K. L. Anderson, R. Stureborg, A. Tyagi, B. Dhingra, “MatViX: Multimodal Information Extraction from Visually Rich Articles,” <i>Proc. NAACL 2025</i>. <a href="https://matvix-bench.github.io/">matvix-bench.github.io</a></li><li>H. W. Kuhn, “The Hungarian method for the assignment problem,” <i>Naval Research Logistics Quarterly</i> 2, 83–97 (1955).</li></ol>
+</section>
+<nav class="pn" aria-label="Figures"><a href="index.html">All figures</a><a class="r" href="fig2-pairing.html">Next: Pairing series one-to-one: recall, precision and swapped labels</a></nav>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>const OPT={
+1:{hung:'one-to-one assignment (Hungarian)',near:'nearest / greedy',label:'by label text',key:'by table key (row + column header)'},
+2:{gtx:'at the ground-truth x values',grid:'even grid on the overlap',pix:'one per pixel column',pts:'point to point',seq:'in sequence order',keys:'at the tick labels'},
+3:{vert:'vertical difference Δy',eucl:'Euclidean point distance',pixd:'pixel distance',maha:'Mahalanobis distance',leash:'longest leash of an ordered walk'},
+4:{val:'the value itself',range:'the y-range',max:'the chart maximum',tick:'the minor tick interval',std:'the spread of the data (covariance)',px:'pixels (no normalization)'},
+5:{wmean:'interval-weighted mean',mean:'mean or RMS',hit:'hit rate at a tolerance',max:'the maximum',cap:'capped at 1, then mean'},
+6:{extrap:'extrapolate the digitized curve',overlap:'score the overlap, report the miss',fail:'fail below a coverage gate',gap:'charge every gap',zero:'unmatched items score zero'}};
+const B={
+ci:{n:'CHART-Info continuous metric (Task 6b)',c:{1:'hung',2:'gtx',3:'vert',4:'val',5:'wmean',6:'extrap'},t:'Relative error at each ground-truth x, capped at 1 and weighted by the x-interval the point represents; precision swaps the curves; series are assigned one-to-one and divided by max(N_GT, N_pred).'},
+fpc:{n:'FPC-NRMSE (DigitizerBench / LinePilot)',c:{1:'hung',2:'pix',3:'vert',4:'range',5:'mean',6:'fail'},t:'RMSE on one position per pixel column of the shared x-range, divided by the y-range; the image scores 1 (worst) unless the line count is right, every line has at least 20 points and covers at least 80% of the plot width.'},
+pe:{n:'PlotExtract (Polak & Morgan)',c:{1:'near',2:'grid',3:'vert',4:'range',5:'mean',6:'overlap'},t:'Both curves interpolated on a 1000-point grid over the overlapping x-range; MAE divided by the data range; the x-range missed at each end is reported separately.'},
+p2s:{n:'Plot2Spectra',c:{1:'hung',2:'pix',3:'pixd',4:'px',5:'hit',6:'zero'},t:'A digitized line matches a ground-truth line if their mean pixel distance is below εₚ; each ground-truth line can be matched once; precision and recall are plotted against εₚ.'},
+sc:{n:'Scatteract',c:{1:'near',2:'pts',3:'eucl',4:'range',5:'hit',6:'zero'},t:'A predicted point is a true positive if it lies within 2% of a ground-truth point in chart coordinates; per-plot precision, recall and F1; a plot counts as extracted when F1 exceeds 0.8.'},
+cis:{n:'CHART-Info point-set metric (scatter)',c:{1:'hung',2:'pts',3:'maha',4:'std',5:'cap',6:'zero'},t:'Pairwise capped, scaled Mahalanobis distance using the covariance of the ground-truth points, solved as an assignment problem; score = 1 − cost / max(N, M).'},
+rms:{n:'RMS-F1 (DePlot) and its relatives',c:{1:'key',2:'keys',3:'vert',4:'val',5:'hit',6:'zero'},t:'Each table cell is a key (row header + column header) and a value; keys matched by normalized Levenshtein distance (cut-off τ = 0.5), values by relative error (cut-off θ = 0.1); minimum-cost matching; precision, recall and F1.'},
+mape:{n:'Adaptive MAPE (ExChart-Bench)',c:{1:'key',2:'keys',3:'vert',4:'max',5:'cap',6:'fail'},t:'Absolute error divided by the largest absolute ground-truth value in the chart, capped at 100%; an unparsable cell or a malformed table counts as 100% error; format success rate reported alongside.'},
+tbe:{n:'Tick-Based Error (FairChart2Table)',c:{1:'key',2:'keys',3:'vert',4:'tick',5:'cap',6:'zero'},t:'|g − p| divided by the minor tick interval t (estimated as one fifth of the major interval), capped at 1, inside the RMS matching; a variant counts only errors above one tick.'},
+ecs:{n:'ECS (EpiCurveBench)',c:{1:'label',2:'seq',3:'vert',4:'range',5:'cap',6:'gap'},t:'Edit distance with real penalty: each aligned pair costs its error divided by the series y-range (fully wrong above 1%), each inserted or deleted point costs λ = 1; series are paired by label similarity.'},
+fr:{n:'Discrete Fréchet distance (MatViX curve score)',c:{1:'hung',2:'seq',3:'leash',4:'range',5:'max',6:'zero'},t:'The smallest possible longest leash between two walkers who move forward along their own curves; MatViX divides it by the norm of the ground-truth curve and multiplies by the axis-header similarity.'}};
+let cur='ci';
+const f=x=>0.15+0.1*x+0.55*Math.exp(-(((x-0.45)/0.09)**2));
+const X=x=>14+172*x,Y=y=>96-78*y;
+const gtPath=()=>{let d='';for(let i=0;i<=80;i++){const x=i/80;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(f(x)).toFixed(1)}return d};
+const prPath=(x0,x1)=>{let d='';for(let i=0;i<=40;i++){const x=x0+(x1-x0)*i/40;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(f(x-0.04)).toFixed(1)}return d};
+function base(s,x0,x1){s.innerHTML='';s.appendChild(el('path',{d:gtPath(),fill:'none',stroke:'#2a78d6','stroke-width':1.8}));s.appendChild(el('path',{d:prPath(x0===undefined?0:x0,x1===undefined?1:x1),fill:'none',stroke:'#eb6834','stroke-width':1.8,'stroke-dasharray':'4 3'}))}
+function draw(){const b=B[cur];
+document.querySelectorAll('#bm button').forEach(o=>o.classList.toggle('on',o.dataset.b===cur));
+for(let k=1;k<=6;k++){const box=$('o'+k);box.innerHTML='';for(const id in OPT[k]){const c=document.createElement('span');c.className='chip'+(b.c[k]===id?' on':'');c.textContent=OPT[k][id];box.appendChild(c)}}
+$('note').textContent=b.n+'. '+b.t;
+// 1 pairing: three GT lines, three pred lines, assignment arrows
+let s=$('s1');s.innerHTML='';
+const ys=[28,55,82];ys.forEach((y,i)=>{s.appendChild(el('line',{x1:14,x2:80,y1:y,y2:y-6*Math.sin(i),stroke:'#2a78d6','stroke-width':2}));s.appendChild(el('text',{x:10,y:y+4,'text-anchor':'end','font-size':9,style:'fill:var(--text-muted)'},'G'+(i+1)))});
+const py=[82,30,56];py.forEach((y,i)=>{s.appendChild(el('line',{x1:120,x2:186,y1:y,y2:y-6*Math.sin(i),stroke:'#eb6834','stroke-width':2,'stroke-dasharray':'4 3'}));s.appendChild(el('text',{x:190,y:y+4,'font-size':9,style:'fill:var(--text-muted)'},'P'+(i+1)))});
+const pairs=b.c[1]==='label'?[[0,1],[1,2],[2,0]]:[[0,1],[1,2],[2,0]];
+pairs.forEach(q=>s.appendChild(el('line',{x1:82,y1:ys[q[0]],x2:118,y2:py[q[1]],stroke:'#534AB7','stroke-width':1.4})));
+s.appendChild(el('text',{x:100,y:104,'text-anchor':'middle','font-size':9,style:'fill:var(--text-secondary)'},b.c[1]==='hung'?'min total cost, one each':b.c[1]==='near'?'each to its nearest':b.c[1]==='label'?'same legend label':'same row + column key'));
+// 2 sampling
+s=$('s2');base(s,0.08,0.92);
+const o2=b.c[2];
+if(o2==='gtx'){for(let i=0;i<=12;i++){const u=i/12;s.appendChild(el('circle',{cx:X(u),cy:Y(f(u)),r:2.6,fill:'#2a78d6'}));s.appendChild(el('line',{x1:X(u),x2:X(u),y1:100,y2:106,stroke:'#e34948','stroke-width':1.5}))}}
+if(o2==='grid'){for(let i=0;i<=14;i++){const u=0.08+0.84*i/14;s.appendChild(el('line',{x1:X(u),x2:X(u),y1:100,y2:106,stroke:'#e34948','stroke-width':1.5}))}s.appendChild(el('rect',{x:X(0.08),y:8,width:X(0.92)-X(0.08),height:94,fill:'#1D9E75','fill-opacity':0.08}))}
+if(o2==='pix'){for(let i=0;i<=42;i++){const u=0.08+0.84*i/42;s.appendChild(el('line',{x1:X(u),x2:X(u),y1:101,y2:106,stroke:'#e34948','stroke-width':1}))}}
+if(o2==='pts'){for(let i=0;i<8;i++){const u=0.1+0.8*i/7;s.appendChild(el('circle',{cx:X(u),cy:Y(f(u)),r:3,fill:'#2a78d6'}));s.appendChild(el('circle',{cx:X(u+0.03),cy:Y(f(u-0.01)),r:3,fill:'#eb6834'}))}}
+if(o2==='seq'){for(let i=0;i<10;i++){const u=0.05+0.9*i/9;s.appendChild(el('text',{x:X(u),y:Y(f(u))-6,'text-anchor':'middle','font-size':8,style:'fill:#2a78d6'},i+1));s.appendChild(el('text',{x:X(u+0.02),y:Y(f(u-0.02))+12,'text-anchor':'middle','font-size':8,style:'fill:#eb6834'},i+1))}}
+if(o2==='keys'){[0.1,0.3,0.5,0.7,0.9].forEach(u=>{s.appendChild(el('line',{x1:X(u),x2:X(u),y1:98,y2:104,style:'stroke:var(--text-muted)'}));s.appendChild(el('text',{x:X(u),y:109,'text-anchor':'middle','font-size':8,style:'fill:var(--text-muted)'},u.toFixed(1)));s.appendChild(el('rect',{x:X(u)-3,y:Y(f(u))-3,width:6,height:6,fill:'#2a78d6'}))})}
+// 3 measure
+s=$('s3');base(s,0.08,0.92);
+const o3=b.c[3];
+if(o3==='vert'){for(let i=1;i<10;i++){const u=0.08+0.84*i/10;s.appendChild(el('line',{x1:X(u),x2:X(u),y1:Y(f(u)),y2:Y(f(u-0.04)),stroke:'#e34948','stroke-width':1.6}))}}
+if(o3==='eucl'||o3==='maha'){for(let i=1;i<9;i++){const u=0.1+0.8*i/9;const a=[X(u),Y(f(u))],c=[X(u+0.04),Y(f(u))];s.appendChild(el('circle',{cx:a[0],cy:a[1],r:2.6,fill:'#2a78d6'}));s.appendChild(el('circle',{cx:c[0],cy:c[1],r:2.6,fill:'#eb6834'}));s.appendChild(el('line',{x1:a[0],y1:a[1],x2:c[0],y2:c[1],stroke:'#e34948','stroke-width':1.6}));if(o3==='maha')s.appendChild(el('ellipse',{cx:a[0],cy:a[1],rx:11,ry:5,fill:'none',stroke:'#2a78d6','stroke-dasharray':'2 2'}))}}
+if(o3==='pixd'){for(let i=1;i<12;i++){const u=0.08+0.84*i/12;s.appendChild(el('line',{x1:X(u),x2:X(u),y1:Y(f(u)),y2:Y(f(u-0.04)),stroke:'#e34948','stroke-width':1.6}))}s.appendChild(el('text',{x:100,y:106,'text-anchor':'middle','font-size':9,style:'fill:var(--text-secondary)'},'measured in image pixels'))}
+if(o3==='leash'){const steps=[[0.1,0.12],[0.3,0.33],[0.42,0.47],[0.5,0.56],[0.62,0.66],[0.85,0.88]];steps.forEach(q=>s.appendChild(el('line',{x1:X(q[0]),y1:Y(f(q[0])),x2:X(q[1]),y2:Y(f(q[1]-0.04)),stroke:'#e34948','stroke-width':1.4,'stroke-dasharray':'2 2'})));s.appendChild(el('line',{x1:X(0.5),y1:Y(f(0.5)),x2:X(0.56),y2:Y(f(0.52)),stroke:'#e34948','stroke-width':2.6}))}
+// 4 normalize
+s=$('s4');s.innerHTML='';
+s.appendChild(el('line',{x1:30,x2:30,y1:8,y2:100,style:'stroke:var(--border-strong)'}));s.appendChild(el('line',{x1:30,x2:190,y1:100,y2:100,style:'stroke:var(--border-strong)'}));
+const o4=b.c[4];
+[0,0.25,0.5,0.75,1].forEach(v=>{s.appendChild(el('line',{x1:26,x2:30,y1:100-88*v,y2:100-88*v,style:'stroke:var(--border-strong)'}));s.appendChild(el('text',{x:23,y:103-88*v,'text-anchor':'end','font-size':8,style:'fill:var(--text-muted)'},(10*v).toFixed(0)))});
+const same=(x,y)=>{s.appendChild(el('circle',{cx:x,cy:100-88*y,r:2.8,fill:'#2a78d6'}));s.appendChild(el('circle',{cx:x,cy:100-88*(y+0.08),r:2.8,fill:'#eb6834'}));s.appendChild(el('line',{x1:x,x2:x,y1:100-88*y,y2:100-88*(y+0.08),stroke:'#e34948','stroke-width':1.6}))};
+same(70,0.05);same(150,0.8);
+const lab=o4==='val'?['÷0.5 → 160%','÷8 → 10%']:o4==='range'?['÷10 → 8%','÷10 → 8%']:o4==='max'?['÷10 → 8%','÷10 → 8%']:o4==='tick'?['÷0.5 tick → 1.6 ticks','→ 1.6 ticks']:o4==='std'?['÷ spread','÷ spread']:['8 px','8 px'];
+s.appendChild(el('text',{x:70,y:60,'text-anchor':'middle','font-size':9,style:'fill:var(--text-danger)'},lab[0]));s.appendChild(el('text',{x:150,y:20,'text-anchor':'middle','font-size':9,style:'fill:var(--text-danger)'},lab[1]));
+s.appendChild(el('text',{x:110,y:109,'text-anchor':'middle','font-size':9,style:'fill:var(--text-secondary)'},'same miss of 0.8 near 0.5 and near 8'));
+// 5 aggregate
+s=$('s5');s.innerHTML='';
+const errs=[0.1,0.05,0.3,0.9,0.15,0.08,0.12,0.6,0.05,0.07];const bw=16;
+errs.forEach((e,i)=>{const h=80*Math.min(1,e);s.appendChild(el('rect',{x:16+i*bw,y:96-h,width:bw-3,height:h,fill:'#e34948','fill-opacity':0.6}))});
+const o5=b.c[5];
+if(o5==='mean'||o5==='wmean'||o5==='cap'){const mv=errs.reduce((a,b)=>a+Math.min(1,b),0)/errs.length;s.appendChild(el('line',{x1:14,x2:178,y1:96-80*mv,y2:96-80*mv,stroke:'#534AB7','stroke-width':2}));s.appendChild(el('text',{x:180,y:99-80*mv,'font-size':9,style:'fill:#534AB7'},o5==='wmean'?'weighted mean':o5==='cap'?'mean of min(1,e)':'mean'));if(o5==='wmean')errs.forEach((e,i)=>s.appendChild(el('rect',{x:16+i*bw,y:98,width:(bw-3)*(0.6+0.8*Math.abs(Math.sin(i))),height:3,fill:'#534AB7'})))}
+if(o5==='hit'){const th=0.2;s.appendChild(el('line',{x1:14,x2:178,y1:96-80*th,y2:96-80*th,stroke:'#534AB7','stroke-width':1.5,'stroke-dasharray':'3 2'}));s.appendChild(el('text',{x:180,y:99-80*th,'font-size':9,style:'fill:#534AB7'},'tolerance'));const n=errs.filter(e=>e<=th).length;s.appendChild(el('text',{x:96,y:14,'text-anchor':'middle','font-size':10,style:'fill:var(--text-primary)'},n+' of 10 within tolerance → '+(10*n)+'%'))}
+if(o5==='max'){const i=3;s.appendChild(el('rect',{x:16+i*bw,y:96-80*errs[i],width:bw-3,height:80*errs[i],fill:'none',stroke:'#534AB7','stroke-width':2}));s.appendChild(el('text',{x:96,y:14,'text-anchor':'middle','font-size':10,style:'fill:var(--text-primary)'},'the single worst difference'))}
+// 6 missing
+s=$('s6');base(s,0.08,0.7);
+const o6=b.c[6];
+if(o6==='extrap'){let d='';for(let i=0;i<=20;i++){const x=0.7+0.3*i/20,y=f(0.66)+(f(0.66)-f(0.64))/0.02*(x-0.7);d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(y).toFixed(1)}s.appendChild(el('path',{d:d,fill:'none',stroke:'#eb6834','stroke-width':1.4,'stroke-dasharray':'2 3'}));[0.75,0.85,0.95].forEach(u=>s.appendChild(el('line',{x1:X(u),x2:X(u),y1:Y(f(u)),y2:Y(f(0.66)+(f(0.66)-f(0.64))/0.02*(u-0.7)),stroke:'#e34948','stroke-width':1.6})))}
+if(o6==='overlap'){s.appendChild(el('rect',{x:X(0.08),y:8,width:X(0.7)-X(0.08),height:94,fill:'#1D9E75','fill-opacity':0.08}));s.appendChild(el('line',{x1:X(0.7),x2:X(1),y1:14,y2:14,stroke:'#e34948','stroke-width':2}));s.appendChild(el('text',{x:X(0.85),y:10,'text-anchor':'middle','font-size':8,style:'fill:var(--text-danger)'},'miss 0.30'))}
+if(o6==='fail'){s.appendChild(el('rect',{x:X(0.08),y:102,width:X(0.7)-X(0.08),height:4,fill:'#D85A30'}));s.appendChild(el('line',{x1:X(0.8),x2:X(0.8),y1:98,y2:110,style:'stroke:var(--text-muted)'}));s.appendChild(el('text',{x:X(0.8),y:96,'text-anchor':'middle','font-size':8,style:'fill:var(--text-muted)'},'80% gate'));s.appendChild(el('text',{x:100,y:30,'text-anchor':'middle','font-size':10,'font-weight':600,style:'fill:var(--text-danger)'},'62% < 80% → loss = 1'))}
+if(o6==='gap'){for(let i=0;i<6;i++){const u=0.74+0.05*i;s.appendChild(el('circle',{cx:X(u),cy:Y(f(u)),r:4.5,fill:'none',stroke:'#e34948','stroke-width':1.6}))}s.appendChild(el('text',{x:X(0.86),y:Y(f(0.86))-10,'text-anchor':'middle','font-size':8,style:'fill:var(--text-danger)'},'6 gaps × λ'))}
+if(o6==='zero'){s.appendChild(el('text',{x:X(0.85),y:Y(f(0.85))-8,'text-anchor':'middle','font-size':9,style:'fill:var(--text-danger)'},'no partner → 0'));for(let i=0;i<4;i++){const u=0.76+0.06*i;s.appendChild(el('circle',{cx:X(u),cy:Y(f(u)),r:2.6,fill:'#2a78d6'}))}}
+}
+document.querySelectorAll('#bm button').forEach(b=>b.addEventListener('click',()=>{cur=b.dataset.b;draw()}));
+draw();</script>
+</body>
+</html>

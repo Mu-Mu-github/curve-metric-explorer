@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scatter plots: a hit within tolerance, and the tolerance ladder – Curve-metric explorer</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+</style>
+
+<style id="embed-style">
+body.embed header.top, body.embed main > h1, body.embed .lede, body.embed main > section, body.embed nav.pn,
+body.embed h2.sr-only, body.embed main > h2, body.embed main > p, body.embed main > ol.refs {display:none !important}
+body.embed {background:var(--panel)}
+body.embed .wrap {max-width:none; padding:6px 8px 10px}
+body.embed .ebar {display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family:var(--sans);
+  font-size:13px; color:var(--graphite); margin:0 0 6px; padding:0 2px}
+body.embed .ebar b {font-weight:600; color:var(--ink)}
+body.embed .ebar a {white-space:nowrap}
+body.embed figure {margin:0}
+body.embed .panel {border-radius:8px}
+body:not(.embed) .ebar {display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>Figure 4 of 8</span></header>
+<main>
+<h1>Scatter plots: a hit within tolerance, and the tolerance ladder</h1>
+<div class="lede"><p>A scatter plot has no x-order to interpolate along, so its metrics pair points and count hits. Scatteract counts a predicted point as a true positive when it lies within 2% of a ground-truth point in range-normalized chart coordinates and reports precision, recall and F1. CHART-Info replaces the fixed circle by a capped, covariance-scaled Mahalanobis distance solved as an assignment problem. Newer benchmarks keep the hit idea but report it at several tolerances at once, because the accuracy of today’s extractors drops by tens of points between ±5% and ±2%.</p></div>
+<figure class="panel">
+<style>
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.bar button.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary)}
+.row input{flex:1;min-width:0}
+.v{min-width:46px;text-align:right;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:12px 0 4px}
+.card{background:var(--surface-1);border-radius:var(--radius);padding:10px 12px}
+.card .l{font-size:12px;color:var(--text-secondary)}
+.card .n{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.card .s{font-size:11px;color:var(--text-muted)}
+</style>
+<h2 class="sr-only">Ground-truth and digitized scatter points with tolerance circles and matching links, and a hit-rate versus tolerance curve</h2>
+<div class="bar" id="modes"><span style="font-size:13px;color:var(--text-secondary)">Matching:</span><button data-m="near" class="on">nearest point within τ (Scatteract)</button><button data-m="hung">one-to-one assignment, then τ</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--text-secondary);margin-bottom:4px">
+<span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4" fill="#2a78d6"/></svg>Ground truth</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4" fill="#eb6834"/></svg>Digitized</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4" fill="none" stroke="#eb6834" stroke-width="1.5"/></svg>Spurious</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#1D9E75" stroke-width="2"/></svg>Hit</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="#e34948" stroke-width="2"/></svg>Miss</span>
+</div>
+<svg id="pl" viewBox="0 0 680 300" width="100%" role="img" aria-label="Scatter plot with tolerance circles on the left and the hit-rate versus tolerance curve on the right"></svg>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px 24px;margin-top:8px">
+<label class="row">Tolerance τ (% of range)<input type="range" id="tol" min="0.5" max="10" step="0.5" value="2"><span class="v" id="tolv"></span></label>
+<label class="row">Digitizing noise<input type="range" id="nz" min="0" max="0.06" step="0.002" value="0.014"><span class="v" id="nzv"></span></label>
+<label class="row">Points missed<input type="range" id="miss" min="0" max="8" step="1" value="2"><span class="v" id="missv"></span></label>
+<label class="row">Spurious points<input type="range" id="extra" min="0" max="8" step="1" value="2"><span class="v" id="extrav"></span></label>
+</div>
+<div class="cards">
+<div class="card"><div class="l">Precision</div><div class="n" id="c1">-</div><div class="s">hits ÷ digitized</div></div>
+<div class="card"><div class="l">Recall</div><div class="n" id="c2">-</div><div class="s">hits ÷ ground truth</div></div>
+<div class="card"><div class="l">F1</div><div class="n" id="c3">-</div><div class="s" id="c3s"></div></div>
+<div class="card"><div class="l">CHART-Info point-set score</div><div class="n" id="c4">-</div><div class="s">capped Mahalanobis, assignment</div></div>
+<div class="card"><div class="l">Hit rate at 2% / 5%</div><div class="n" id="c5">-</div><div class="s">recall at two tolerances</div></div>
+<div class="card"><div class="l">Drop from 5% to 2%</div><div class="n" id="c6">-</div><div class="s">the precision cliff</div></div>
+</div>
+</figure>
+<p class="cap"><b>Figure 4.</b> Left: 24 ground-truth points (blue) with tolerance circles, and their digitizations (orange); green links are hits, red links misses, hollow orange points are spurious. Right: the hit rate as a continuous function of the tolerance, with markers at 1, 2, 5 and 10%; the slope of that curve is the precision cliff.</p>
+<section><h2>What to try</h2>
+<ul>
+<li>Leave the noise at its default and drag the tolerance from 10% down to 1%. The hit rate stays near 100% until the circle shrinks to the size of the digitizing noise, then falls off a cliff. The “Drop from 5% to 2%” card is the quantity PlotGround reports for frontier models: 11 to 24 points.</li>
+<li>Add spurious points. Recall and the hit-rate curve do not move; precision and F1 do. Scatteract’s success rule needs F1 above 0.8, so enough stray points fail the plot even when every true point was found.</li>
+<li>Switch to one-to-one assignment and raise the noise until two digitized points fall near the same ground-truth point. Nearest-point matching lets both count as hits; the assignment gives the second one to another point or leaves it unmatched.</li>
+<li>Watch the CHART-Info card while increasing the noise. Its distance is scaled by the spread of the ground-truth cloud and capped so that a point 5% of the mean away already scores zero, so it reaches its floor before the 5% circle does.</li>
+</ul>
+</section>
+<section><h2>How it is computed</h2>
+<div class="eq">Scatteract:  predicted point p is a true positive if ‖(p − g)‖ ≤ τ in chart coordinates normalized by the true x- and y-ranges (τ = 2% in the paper)
+  precision = TP ÷ Nᵖʳᵉᵈ,  recall = TP ÷ Nᴳᵀ,  F1 = harmonic mean;  a plot is “successfully extracted” when F1 > 0.8
+CHART-Info point-set metric:  D(g, p) = min(1, √((g − p)ᵀ V⁻¹ (g − p)) ÷ γ),  V = covariance of the ground-truth points,
+  diagonal of V⁻¹ capped at 400 ÷ mean²;  cost matrix padded with 1 to K = max(N, M);  score = 1 − (assignment cost) ÷ K
+Tolerance ladder:  recall at τ = 1, 2, 5 and 10% of the range (PlotGround and PlotPick report accuracy at such bands; Bar-JEPA uses 5% relaxed and 2% strict)</div>
+</section>
+<section><h2>Notes on this implementation</h2>
+<ul>
+<li>The nearest-point rule follows Scatteract’s text, which pairs each predicted point with its closest true point; two predictions can therefore claim the same true point. The one-to-one mode pads the distance matrix and solves the assignment with the Hungarian algorithm before applying τ.</li>
+<li>The CHART-Info document does not give the scale γ; γ = 1 here. With the cap on V⁻¹, a point that is 5% of the coordinate mean away in one direction reaches the maximum penalty, as the document notes.</li>
+<li>Points live in a unit square, so a tolerance of 2% is a circle of radius 0.02; Scatteract normalizes each axis by its own range, which is the same thing here.</li>
+<li>The 24 ground-truth points are two synthetic clusters; the digitization adds uniform jitter, drops every third point up to the chosen count, and adds spurious points at random positions.</li>
+</ul>
+</section>
+<section><h2>References</h2>
+<ol class="refs"><li>M. Cliche, D. Rosenberg, D. Madeka, C. Yee, “Scatteract: Automated Extraction of Data from Scatter Plots,” <i>Proc. ECML PKDD 2017</i>.</li><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li><li>P. C. Mahalanobis, “On the generalised distance in statistics,” <i>Proc. Natl. Inst. Sci. India</i> 2, 49–55 (1936).</li><li>Y. Zhang, B. Li, H. Duan, J. Miao, Y. Wang, X. Du, C. Li, S. Liu, K. Wu, J. Zou, “PlotGround: Grounding Plot Digitization in Real Scientific Figures and Their Source Data,” arXiv:2610.06825 (2026).</li><li>T. Carstensen, “PlotPick: AI-powered batch extraction of numerical data from scientific figures,” arXiv:2605.06021v2 (2026).</li><li>“Bar-JEPA: Extracting Values from Bar Chart with Joint-Embedding Predictive Architecture,” arXiv:2608.06062 (2026).</li><li>H. W. Kuhn, “The Hungarian method for the assignment problem,” <i>Naval Research Logistics Quarterly</i> 2, 83–97 (1955).</li></ol>
+</section>
+<nav class="pn" aria-label="Figures"><a href="fig3-line-error.html">Previous: Line plots: error on a shared grid, and what you divide by</a><a class="r" href="fig5-calibration.html">Next: Pixels before values: axis calibration</a></nav>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>const N=24,G=[];for(let i=0;i<N;i++){const c=i<14?[0.3,0.35]:[0.7,0.72],r=i<14?0.17:0.13;G.push([c[0]+r*rnd(i+1)+0.05*rnd(i+50),c[1]+r*rnd(i+2)+0.05*rnd(i+70)])}
+const X=x=>44+300*x,Y=y=>268-250*y;
+let mode='near';
+function hungarian(a){const n=a.length,INF=1e9,u=new Array(n+1).fill(0),v=new Array(n+1).fill(0),p=new Array(n+1).fill(0),way=new Array(n+1).fill(0);
+for(let i=1;i<=n;i++){p[0]=i;let j0=0;const minv=new Array(n+1).fill(INF),used=new Array(n+1).fill(false);
+do{used[j0]=true;const i0=p[j0];let delta=INF,j1=0;for(let j=1;j<=n;j++)if(!used[j]){const cur=a[i0-1][j-1]-u[i0]-v[j];if(cur<minv[j]){minv[j]=cur;way[j]=j0}if(minv[j]<delta){delta=minv[j];j1=j}}
+for(let j=0;j<=n;j++){if(used[j]){u[p[j]]+=delta;v[j]-=delta}else minv[j]-=delta}j0=j1}while(p[j0]!==0);
+do{const j1=way[j0];p[j0]=p[j1];j0=j1}while(j0)}
+const res=[];for(let j=1;j<=n;j++)res.push([p[j]-1,j-1]);return res}
+function preds(){const nz=+$('nz').value,miss=+$('miss').value,extra=+$('extra').value,P=[];
+for(let i=0;i<N;i++){if(i%3===1&&P.filter(p=>p.src>=0).length>=N-miss)continue;P.push({x:G[i][0]+nz*rnd(i+11),y:G[i][1]+nz*rnd(i+23),src:i})}
+let kept=P.filter(p=>p.src>=0);while(kept.length>N-miss){const k=kept.pop();P.splice(P.indexOf(k),1)}
+for(let e=0;e<extra;e++)P.push({x:0.1+0.8*(0.5+0.5*rnd(e+200)),y:0.1+0.8*(0.5+0.5*rnd(e+300)),src:-1});return P}
+const dist=(g,p)=>Math.hypot(g[0]-p.x,g[1]-p.y);
+function hits(P,tau){if(mode==='near'){let tp=0;const links=[];P.forEach(p=>{let b=-1,bd=1e9;G.forEach((g,i)=>{const d=dist(g,p);if(d<bd){bd=d;b=i}});const ok=bd<=tau;if(ok)tp++;links.push([b,ok])});return {tp:tp,links:links}}
+const n=Math.max(N,P.length),C=[];for(let i=0;i<n;i++){C.push([]);for(let j=0;j<n;j++)C[i].push(i<N&&j<P.length?Math.min(1,dist(G[i],P[j])/tau):1)}
+const A=hungarian(C),links=P.map(()=>[-1,false]);let tp=0;A.forEach(q=>{const i=q[0],j=q[1];if(i<N&&j<P.length){const ok=dist(G[i],P[j])<=tau;if(ok)tp++;links[j]=[i,ok]}});return {tp:tp,links:links}}
+function chartinfo(P){const mx=G.reduce((s,g)=>s+g[0],0)/N,my=G.reduce((s,g)=>s+g[1],0)/N;let vx=0,vy=0,vxy=0;G.forEach(g=>{vx+=(g[0]-mx)**2;vy+=(g[1]-my)**2;vxy+=(g[0]-mx)*(g[1]-my)});vx/=N;vy/=N;vxy/=N;
+const det=vx*vy-vxy*vxy;let a=vy/det,b=-vxy/det,c=vx/det;a=Math.min(a,400/(mx*mx));c=Math.min(c,400/(my*my));
+const n=Math.max(N,P.length),C=[];for(let i=0;i<n;i++){C.push([]);for(let j=0;j<n;j++){if(i<N&&j<P.length){const dx=G[i][0]-P[j].x,dy=G[i][1]-P[j].y;C[i].push(Math.min(1,Math.sqrt(Math.max(0,a*dx*dx+2*b*dx*dy+c*dy*dy))))}else C[i].push(1)}}
+const A=hungarian(C);let cost=0;A.forEach(q=>cost+=C[q[0]][q[1]]);return 1-cost/n}
+function draw(){const tau=+$('tol').value/100;$('tolv').textContent=(100*tau).toFixed(1)+'%';$('nzv').textContent=(+$('nz').value).toFixed(3);$('missv').textContent=$('miss').value;$('extrav').textContent=$('extra').value;
+const P=preds(),H=hits(P,tau),prec=P.length?H.tp/P.length:0,rec=H.tp/N,f1=prec+rec?2*prec*rec/(prec+rec):0;
+const svg=$('pl');svg.innerHTML='';
+for(let k=0;k<=4;k++){const v=k/4;svg.appendChild(el('line',{x1:44,x2:344,y1:Y(v),y2:Y(v),style:'stroke:var(--border)'}));svg.appendChild(el('line',{x1:X(v),x2:X(v),y1:18,y2:268,style:'stroke:var(--border)'}));svg.appendChild(el('text',{x:38,y:Y(v)+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},v.toFixed(2)));svg.appendChild(el('text',{x:X(v),y:284,'text-anchor':'middle','font-size':11,style:'fill:var(--text-muted)'},v.toFixed(2)))}
+G.forEach(g=>svg.appendChild(el('circle',{cx:X(g[0]),cy:Y(g[1]),r:300*tau,fill:'#2a78d6','fill-opacity':0.07,stroke:'#2a78d6','stroke-width':1,'stroke-dasharray':'3 3'})));
+P.forEach((p,j)=>{const l=H.links[j];if(l[0]>=0&&(l[1]||mode==='hung'))svg.appendChild(el('line',{x1:X(G[l[0]][0]),y1:Y(G[l[0]][1]),x2:X(p.x),y2:Y(p.y),stroke:l[1]?'#1D9E75':'#e34948','stroke-width':1.6}))});
+G.forEach(g=>svg.appendChild(el('circle',{cx:X(g[0]),cy:Y(g[1]),r:3.4,fill:'#2a78d6'})));
+P.forEach(p=>svg.appendChild(el('circle',{cx:X(p.x),cy:Y(p.y),r:3.6,fill:p.src<0?'none':'#eb6834',stroke:'#eb6834','stroke-width':1.6})));
+const x0=400,y0=40,w=260,h=200;svg.appendChild(el('text',{x:x0,y:22,'font-size':12,style:'fill:var(--text-secondary)'},'hit rate (recall) versus tolerance'));
+for(let k=0;k<=4;k++){const v=k/4;svg.appendChild(el('line',{x1:x0,x2:x0+w,y1:y0+h-h*v,y2:y0+h-h*v,style:'stroke:var(--border)'}));svg.appendChild(el('text',{x:x0-6,y:y0+h-h*v+4,'text-anchor':'end','font-size':11,style:'fill:var(--text-muted)'},Math.round(100*v)+'%'))}
+[1,2,5,10].forEach(tp=>{svg.appendChild(el('text',{x:x0+w*tp/10,y:y0+h+16,'text-anchor':'middle','font-size':11,style:'fill:var(--text-muted)'},tp+'%'));svg.appendChild(el('line',{x1:x0+w*tp/10,x2:x0+w*tp/10,y1:y0+h,y2:y0+h+4,style:'stroke:var(--border-strong)'}))});
+let d='';const ladder={};for(let k=0;k<=100;k++){const tt=0.001+0.099*k/100,r=hits(P,tt).tp/N;d+=(k?'L':'M')+(x0+w*tt/0.1).toFixed(1)+' '+(y0+h-h*r).toFixed(1)}
+svg.appendChild(el('path',{d:d,fill:'none',stroke:'#534AB7','stroke-width':2}));
+[0.01,0.02,0.05,0.1].forEach(tt=>{const r=hits(P,tt).tp/N;ladder[tt]=r;svg.appendChild(el('circle',{cx:x0+w*tt/0.1,cy:y0+h-h*r,r:4,fill:'#534AB7'}));svg.appendChild(el('text',{x:x0+w*tt/0.1,y:y0+h-h*r-8,'text-anchor':'middle','font-size':10,style:'fill:#534AB7'},Math.round(100*r)+'%'))});
+svg.appendChild(el('line',{x1:x0+w*tau/0.1,x2:x0+w*tau/0.1,y1:y0,y2:y0+h,stroke:'#eb6834','stroke-width':1,'stroke-dasharray':'3 3'}));
+$('c1').textContent=prec.toFixed(2);$('c2').textContent=rec.toFixed(2);$('c3').textContent=f1.toFixed(2);$('c3s').textContent=f1>0.8?'plot counts as extracted (F1 > 0.8)':'plot fails (F1 ≤ 0.8)';
+$('c4').textContent=chartinfo(P).toFixed(3);$('c5').textContent=Math.round(100*ladder[0.02])+'% / '+Math.round(100*ladder[0.05])+'%';$('c6').textContent=(Math.round(100*(ladder[0.05]-ladder[0.02])))+' pts';
+}
+['tol','nz','miss','extra'].forEach(id=>$(id).addEventListener('input',draw));
+document.querySelectorAll('#modes button').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.m;document.querySelectorAll('#modes button').forEach(o=>o.classList.toggle('on',o===b));draw()}));
+draw();</script>
+
+<script id="embed-script">
+(function(){
+  var PRESET = {"tol": "0.5"};
+  var FULL = "../fig4-scatter.html";
+  var TITLE = "Scatter points: hits within a tolerance";
+  function apply(q){
+    Object.keys(q).forEach(function(k){
+      var v = q[k];
+      if (k === 'focus') return;
+      if (k === 'btn') {
+        var b = document.querySelector('button[data-m="'+v+'"],button[data-b="'+v+'"]');
+        if (b) b.click();
+        return;
+      }
+      var el = document.getElementById(k); if (!el) return;
+      if (el.type === 'checkbox') { el.checked = (v === '1'); }
+      else { el.value = v; }
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      el.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+  }
+  window.addEventListener('load', function(){
+    try {
+      var hash = {}; new URLSearchParams(location.hash.slice(1)).forEach(function(v,k){ hash[k]=v; });
+      var focus = hash.focus !== '0';
+      if (focus) {
+        document.body.classList.add('embed');
+        var main = document.querySelector('main') || document.body;
+        var bar = document.createElement('div'); bar.className = 'ebar';
+        bar.innerHTML = '<span><b>' + TITLE + '</b></span>' +
+                        '<a href="' + FULL + '" target="_blank" rel="noopener">Full page with the explanation \u2197</a>';
+        main.insertBefore(bar, main.firstChild);
+      }
+      var state = {}; Object.keys(PRESET).forEach(function(k){ state[k]=PRESET[k]; });
+      Object.keys(hash).forEach(function(k){ state[k]=hash[k]; });
+      apply(state);
+      window.scrollTo(0, 0);
+    } catch (e) { if (window.console) console.error(e); }
+  });
+})();
+</script>
+</body>
+</html>

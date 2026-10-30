@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coverage and failures: scoring a whole benchmark – Curve-metric explorer</title>
+<style>
+:root{color-scheme:light dark;
+--paper:#F5F7F8;--panel:#FFFFFF;--grid:#DDE5EA;--ink:#17212B;--graphite:#4B5865;--muted:#7B8794;
+--rule:rgba(23,33,43,.14);--rule-strong:rgba(23,33,43,.28);--link:#1D5FA6;
+--text-primary:var(--ink);--text-secondary:var(--graphite);--text-muted:var(--muted);
+--surface-1:#EEF2F4;--surface-2:var(--panel);--border:var(--rule);--border-strong:var(--rule-strong);
+--bg-accent:#E3EEF9;--text-accent:#1D5FA6;--border-accent:#8DB8E6;--bg-accent-muted:rgba(29,95,166,.08);
+--bg-success:#E4F1DA;--text-success:#2F5E10;--border-success:#9CC96A;
+--bg-danger:#FBE6E5;--text-danger:#A3302D;--border-danger:#EE9C9A;--text-pro:#534AB7;
+--radius:6px;
+--serif:Charter,"Bitstream Charter","Sitka Text",Cambria,"Iowan Old Style",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{
+--paper:#0E1419;--panel:#151D24;--grid:#22303B;--ink:#E3EAF0;--graphite:#A7B4C0;--muted:#7D8B97;
+--rule:rgba(227,234,240,.14);--rule-strong:rgba(227,234,240,.28);--link:#8CBDF0;
+--surface-1:#1C2630;--bg-accent:#13304D;--text-accent:#9CC5F0;--border-accent:#2F6DAE;--bg-accent-muted:rgba(140,189,240,.14);
+--bg-success:#1F3A12;--text-success:#B6DA8E;--border-success:#4F7F26;
+--bg-danger:#4A1A1A;--text-danger:#F4B4B2;--border-danger:#A84442;--text-pro:#B3ADF0}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.65}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--sans);font-size:14px;color:var(--graphite);border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:28px}
+.top a{color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:17px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 12px}
+h2{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 10px}
+.lede{font-size:19px;line-height:1.55;color:var(--graphite);margin:0 0 24px}
+.lede p,p,li{max-width:40em}
+.lede p{margin:0}
+figure{margin:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;font-family:var(--sans);font-size:14px;line-height:1.5}
+.cap{font-size:15px;line-height:1.55;color:var(--graphite);margin:10px 0 0}
+.eq{font-family:var(--serif);white-space:pre-wrap;background:var(--surface-1);border-left:3px solid var(--rule-strong);padding:12px 16px;margin:12px 0;font-size:16px;line-height:1.7;overflow-x:auto}
+ol.refs{font-size:15px;line-height:1.55;padding-left:24px}
+ol.refs li{margin-bottom:8px}
+.pn{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:15px}
+.pn a{max-width:48%}
+.pn .r{text-align:right;margin-left:auto}
+button{font:inherit;font-family:var(--sans);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius);padding:6px 12px;cursor:pointer;line-height:1.3}
+button:hover{background:var(--surface-1)}
+button:active{transform:scale(.98)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+input[type=range]{accent-color:#534AB7}
+input[type=checkbox]{accent-color:#534AB7;width:16px;height:16px;margin:0}
+.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.ic:only-child{margin-right:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-family:var(--sans);font-size:14px;line-height:1.45;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--graphite)}
+@media (max-width:520px){body{font-size:16px}h1{font-size:25px}.lede{font-size:17px}.panel{padding:12px}}
+</style>
+
+<style id="embed-style">
+body.embed header.top, body.embed main > h1, body.embed .lede, body.embed main > section, body.embed nav.pn,
+body.embed h2.sr-only, body.embed main > h2, body.embed main > p, body.embed main > ol.refs {display:none !important}
+body.embed {background:var(--panel)}
+body.embed .wrap {max-width:none; padding:6px 8px 10px}
+body.embed .ebar {display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family:var(--sans);
+  font-size:13px; color:var(--graphite); margin:0 0 6px; padding:0 2px}
+body.embed .ebar b {font-weight:600; color:var(--ink)}
+body.embed .ebar a {white-space:nowrap}
+body.embed figure {margin:0}
+body.embed .panel {border-radius:8px}
+body:not(.embed) .ebar {display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a href="index.html">Curve-metric explorer II</a><span>Figure 6 of 8</span></header>
+<main>
+<h1>Coverage and failures: scoring a whole benchmark</h1>
+<div class="lede"><p>A benchmark is many figures, and some digitizations fail outright: nothing returned, a curve that stops early, a gridline counted as a series. If the error is averaged only over the outputs that exist, a tool that gives up on hard figures looks accurate. DigitizerBench’s three numbers fix this: output success counts outputs, trusted usability counts outputs that pass a structural gate, and FPC-NRMSE gives every untrusted figure the worst score before averaging. PlotExtract instead reports the missed range beside the overlap error. Drag the sliders to change how many of the twenty figures fail in each way.</p></div>
+<figure class="panel">
+<style>
+.row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary)}
+.row input{flex:1;min-width:0}
+.v{min-width:46px;text-align:right;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:12px 0 4px}
+.card{background:var(--surface-1);border-radius:var(--radius);padding:10px 12px}
+.card .l{font-size:12px;color:var(--text-secondary)}
+.card .n{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.card .s{font-size:11px;color:var(--text-muted)}
+</style>
+<h2 class="sr-only">Twenty small figure tiles with their status, and the benchmark-level scores</h2>
+<div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--text-secondary);margin-bottom:4px">
+<span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2" fill="none" stroke="#1D9E75" stroke-width="2"/></svg>Trusted</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2" fill="none" stroke="#D85A30" stroke-width="2"/></svg>Output but untrusted</span>
+<span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2" fill="#888780" fill-opacity="0.35"/></svg>No output</span>
+</div>
+<svg id="pl" viewBox="0 0 680 330" width="100%" role="img" aria-label="Grid of twenty figure tiles with status frames and coverage bars, plus a share bar"></svg>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px 24px;margin-top:8px">
+<label class="row">Figures with no output<input type="range" id="ne" min="0" max="8" step="1" value="2"><span class="v" id="nev"></span></label>
+<label class="row">Figures with an extra line<input type="range" id="nx" min="0" max="8" step="1" value="2"><span class="v" id="nxv"></span></label>
+<label class="row">Figures truncated<input type="range" id="nt" min="0" max="10" step="1" value="4"><span class="v" id="ntv"></span></label>
+<label class="row">Coverage of truncated figures<input type="range" id="cov" min="0.4" max="0.95" step="0.05" value="0.6"><span class="v" id="covv"></span></label>
+<label class="row">Typical error of a trace (÷ range)<input type="range" id="e0" min="0.01" max="0.4" step="0.01" value="0.05"><span class="v" id="e0v"></span></label>
+</div>
+<div class="cards">
+<div class="card"><div class="l">Output success (OS)</div><div class="n" id="c1">-</div><div class="s">figures with any output</div></div>
+<div class="card"><div class="l">Trusted usability (TU)</div><div class="n" id="c2">-</div><div class="s">pass the structural gate</div></div>
+<div class="card"><div class="l">FPC-NRMSE</div><div class="n" id="c3">-</div><div class="s">mean of per-figure scores, lower is better</div></div>
+<div class="card"><div class="l">Error of trusted figures</div><div class="n" id="c4">-</div><div class="s">ē over trusted only</div></div>
+<div class="card"><div class="l">Error over outputs only</div><div class="n" id="c5">-</div><div class="s">survivorship-biased average</div></div>
+<div class="card"><div class="l">(1 − TU) + TU · ē</div><div class="n" id="c6">-</div><div class="s">the identity behind FPC-NRMSE</div></div>
+<div class="card"><div class="l">PlotExtract view</div><div class="n" id="c7">-</div><div class="s">mean overlap error / mean missed range</div></div>
+</div>
+</figure>
+<p class="cap"><b>Figure 6.</b> Each tile is one figure: ground truth in blue, digitization in orange, the coverage bar beneath, and the figure’s FPC score in the corner. Green frames pass the trust gate, amber frames fail it (short coverage or wrong line count), grey tiles returned nothing. The bar below the tiles shows the shares that the three DigitizerBench numbers count.</p>
+<section><h2>What to try</h2>
+<ul>
+<li>Start from the defaults and read the cards: the error over outputs only is a few hundredths, while FPC-NRMSE is about 0.4. The difference is entirely the eight figures that failed the gate and were charged the maximum. This is the survivorship bias the metric was built to remove.</li>
+<li>Raise the coverage of truncated figures to 80%. They cross the gate, trusted usability jumps, and FPC-NRMSE drops even though not a single value changed: the gate is a step, and the 80% threshold is a design choice of the paper, not a physical constant.</li>
+<li>Move all figures to “no output” except a few. Output success falls, trusted usability falls with it, and the identity card shows that FPC-NRMSE is now almost entirely a failure rate. In DigitizerBench’s own table, LinePilot (OCR) at 0.672 owes about 0.62 of that to untrusted images and about 0.05 to error.</li>
+<li>Set the typical error high. The identity still holds, and when the error of a trusted figure reaches 1 it is capped: no single figure can weigh more than a failure.</li>
+</ul>
+</section>
+<section><h2>How it is computed</h2>
+<div class="eq">Per figure i:  eᵢ = RMSE ÷ y-range of its matched line(s);  Cᵢ = covered share of the plot width
+Trust gate Tᵢ = 1 iff the line count is correct, every match has finite error, at least 20 valid points, and Cᵢ ≥ 0.80
+Per-figure score  Fᵢ = eᵢ if Tᵢ = 1 and eᵢ < 1, otherwise 1
+FPC-NRMSE = mean Fᵢ      OS = share of figures with non-empty output      TU = share with Tᵢ = 1
+Because every untrusted figure scores exactly 1:  FPC-NRMSE = (1 − TU) + TU · ēₜᵣᵤₛₜₑₔ
+PlotExtract (per figure with output): MAE on the overlapping x-range, and the missed x-range at the two ends, reported separately</div>
+</section>
+<section><h2>Notes on this implementation</h2>
+<ul>
+<li>Twenty synthetic figures share one ground-truth curve; each digitization carries a random error level drawn around the chosen typical value. A figure with an extra line is given the right number of points and full coverage so that only the line count fails its gate.</li>
+<li>DigitizerBench pairs lines with the Hungarian algorithm on min(e, 1) + (1 − C) before testing the gate; with one true line per figure the pairing is trivial here, so an extra line can only break the count condition.</li>
+<li>The 20-point minimum of the gate is assumed satisfied by every output; the paper does not say whether the y-range in eᵢ is the axis range or the data range, and the data range is used here.</li>
+<li>The published numbers quoted in “What to try” are from Table 3 of the LinePilot paper: FPC-NRMSE 0.672, output success 55.1%, trusted usability 38.2% for LinePilot (OCR) on DigitizerBench-Full.</li>
+</ul>
+</section>
+<section><h2>References</h2>
+<ol class="refs"><li>F. Ma, R. Akhtar, A. Joshi, X. Li, H. Sun, Z. Xiang, X. Chen, Y. Zhao, “LinePilot Digitizer: Line-Plot Recovery with Manual and Automatic Calibration,” arXiv:2609.19377 (2026). Introduces DigitizerBench and FPC-NRMSE.</li><li>M. P. Polak, D. Morgan, “Leveraging Vision Capabilities of Multimodal LLMs for Automated Data Extraction from Plots,” arXiv:2503.12326 (2025). Data: <a href="https://doi.org/10.6084/m9.figshare.28559639">doi.org/10.6084/m9.figshare.28559639</a></li><li>Y. He, P. Ying, L. Cheng, K. Peng, Y. Tian, D. Deng, Y. Wu, “Making Multimodal LLMs Reliable Chart Data Extractors: A Benchmark and Training Framework,” <i>Proc. CHI 2026</i>, doi:10.1145/3772318.3790721 (arXiv:2606.29808). Introduces ExChart-Bench and Adaptive MAPE.</li><li>CHART-Info competition organizers, “Metric for Evaluating Data Extraction from Charts” (official metric document). <a href="https://chartinfo.github.io/metrics/metric.pdf">chartinfo.github.io/metrics/metric.pdf</a></li></ol>
+</section>
+<nav class="pn" aria-label="Figures"><a href="fig5-calibration.html">Previous: Pixels before values: axis calibration</a><a class="r" href="fig7-loops.html">Next: Loops and shifts: order-aware distances</a></nav>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!==undefined)e.textContent=x;return e}
+const rnd=i=>{const s=Math.sin(i*12.9898+78.233)*43758.5453;return (s-Math.floor(s))*2-1};
+function ip(p,u){const n=p.length;let k=0;if(u>=p[n-1][0])k=n-2;else if(u>p[0][0]){while(p[k+1][0]<u)k++}const a=p[k],b=p[k+1];return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0])}
+const ICON={play:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>',pause:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" fill="currentColor"/></svg>',left:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',right:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>'};
+</script>
+<script>const NI=20,f=x=>0.15+0.1*x+0.6*Math.exp(-(((x-0.45)/0.1)**2));
+function draw(){let ne=+$('ne').value,nx=+$('nx').value,nt=+$('nt').value;const cov=+$('cov').value,e0=+$('e0').value;
+if(ne+nx+nt>NI){nt=Math.max(0,NI-ne-nx);if(ne+nx>NI)nx=NI-ne}
+$('nev').textContent=ne;$('nxv').textContent=nx;$('ntv').textContent=nt;$('covv').textContent=Math.round(100*cov)+'%';$('e0v').textContent=e0.toFixed(2);
+const figs=[];for(let i=0;i<NI;i++){const st=i<ne?'empty':i<ne+nx?'extra':i<ne+nx+nt?'trunc':'good';const e=Math.min(1.2,e0*(0.6+0.8*Math.abs(rnd(i+5))));const C=st==='trunc'?cov:1;const trusted=st!=='empty'&&st!=='extra'&&C>=0.8;const F=trusted&&e<1?e:1;figs.push({st:st,e:e,C:C,trusted:trusted,F:F})}
+const out=figs.filter(g=>g.st!=='empty'),tr=figs.filter(g=>g.trusted);
+const OS=out.length/NI,TU=tr.length/NI,FPC=figs.reduce((s,g)=>s+g.F,0)/NI,eT=tr.length?tr.reduce((s,g)=>s+g.e,0)/tr.length:0,eO=out.length?out.reduce((s,g)=>s+g.e,0)/out.length:0,missPE=out.length?out.reduce((s,g)=>s+(1-g.C),0)/out.length:0;
+const svg=$('pl');svg.innerHTML='';
+const tw=128,th=62,gx=8,gy=8;
+figs.forEach((g,i)=>{const col=i%5,row=Math.floor(i/5),x0=4+col*(tw+gx),y0=4+row*(th+gy);
+const stroke=g.st==='empty'?'none':g.trusted?'#1D9E75':'#D85A30';
+svg.appendChild(el('rect',{x:x0,y:y0,width:tw,height:th,rx:5,fill:g.st==='empty'?'#888780':'var(--panel)','fill-opacity':g.st==='empty'?0.2:1,stroke:stroke,'stroke-width':1.8,style:g.st==='empty'?'':'fill:var(--panel)'}));
+if(g.st==='empty'){svg.appendChild(el('text',{x:x0+tw/2,y:y0+th/2+4,'text-anchor':'middle','font-size':11,style:'fill:var(--text-muted)'},'no output'));svg.appendChild(el('text',{x:x0+tw-6,y:y0+12,'text-anchor':'end','font-size':10,'font-weight':600,style:'fill:var(--text-danger)'},'F = 1'));return}
+const PX=x=>x0+8+(tw-16)*x,PY=y=>y0+th-14-(th-26)*y;
+let d='';for(let k=0;k<=40;k++){const x=k/40;d+=(k?'L':'M')+PX(x).toFixed(1)+' '+PY(f(x)).toFixed(1)}svg.appendChild(el('path',{d:d,fill:'none',stroke:'#2a78d6','stroke-width':1.5}));
+let dp='';for(let k=0;k<=40;k++){const x=g.C*k/40;dp+=(k?'L':'M')+PX(x).toFixed(1)+' '+PY(Math.max(0,f(x)+g.e*0.8*Math.sin(3*x+i))).toFixed(1)}svg.appendChild(el('path',{d:dp,fill:'none',stroke:'#eb6834','stroke-width':1.5,'stroke-dasharray':'4 3'}));
+if(g.st==='extra')svg.appendChild(el('line',{x1:PX(0),x2:PX(1),y1:PY(0.35),y2:PY(0.35),stroke:'#eb6834','stroke-width':1.5,'stroke-dasharray':'4 3'}));
+svg.appendChild(el('rect',{x:x0+8,y:y0+th-9,width:tw-16,height:4,rx:2,style:'fill:var(--surface-1)'}));
+svg.appendChild(el('rect',{x:x0+8,y:y0+th-9,width:(tw-16)*g.C,height:4,rx:2,fill:g.C>=0.8?'#1D9E75':'#D85A30'}));
+svg.appendChild(el('text',{x:x0+tw-6,y:y0+12,'text-anchor':'end','font-size':10,'font-weight':600,style:g.F>=1?'fill:var(--text-danger)':'fill:var(--text-success)'},'F = '+(g.F>=1?'1':g.F.toFixed(2))));
+const lab=g.st==='extra'?'2 lines found, 1 true':g.st==='trunc'?'coverage '+Math.round(100*g.C)+'%':'e = '+g.e.toFixed(2);
+svg.appendChild(el('text',{x:x0+8,y:y0+12,'font-size':10,style:'fill:var(--text-secondary)'},lab))});
+const by=300,bw=600,bx=40;
+svg.appendChild(el('text',{x:bx,y:by-10,'font-size':11,style:'fill:var(--text-secondary)'},'shares of the '+NI+' figures'));
+svg.appendChild(el('rect',{x:bx,y:by,width:bw,height:14,rx:3,style:'fill:var(--surface-1)'}));
+svg.appendChild(el('rect',{x:bx,y:by,width:bw*OS,height:14,rx:3,fill:'#D85A30','fill-opacity':0.5}));
+svg.appendChild(el('rect',{x:bx,y:by,width:bw*TU,height:14,rx:3,fill:'#1D9E75'}));
+svg.appendChild(el('text',{x:bx+bw*TU/2,y:by+11,'text-anchor':'middle','font-size':10,style:'fill:#fff'},TU>0.12?'trusted '+Math.round(100*TU)+'%':''));
+if(OS-TU>0.1)svg.appendChild(el('text',{x:bx+bw*(TU+OS)/2,y:by+11,'text-anchor':'middle','font-size':10,style:'fill:var(--text-primary)'},'output, untrusted '+Math.round(100*(OS-TU))+'%'));
+if(1-OS>0.08)svg.appendChild(el('text',{x:bx+bw*(1+OS)/2,y:by+11,'text-anchor':'middle','font-size':10,style:'fill:var(--text-secondary)'},'none '+Math.round(100*(1-OS))+'%'));
+$('c1').textContent=Math.round(100*OS)+'%';$('c2').textContent=Math.round(100*TU)+'%';$('c3').textContent=FPC.toFixed(3);$('c4').textContent=tr.length?eT.toFixed(3):'–';$('c5').textContent=out.length?eO.toFixed(3):'–';$('c6').textContent=((1-TU)+TU*eT).toFixed(3);$('c7').textContent=out.length?eO.toFixed(3)+' / '+Math.round(100*missPE)+'%':'–';
+}
+['ne','nx','nt','cov','e0'].forEach(id=>$(id).addEventListener('input',draw));
+draw();</script>
+
+<script id="embed-script">
+(function(){
+  var PRESET = {};
+  var FULL = "../fig6-benchmark.html";
+  var TITLE = "Twenty figures at once: success, trust and FPC-NRMSE";
+  function apply(q){
+    Object.keys(q).forEach(function(k){
+      var v = q[k];
+      if (k === 'focus') return;
+      if (k === 'btn') {
+        var b = document.querySelector('button[data-m="'+v+'"],button[data-b="'+v+'"]');
+        if (b) b.click();
+        return;
+      }
+      var el = document.getElementById(k); if (!el) return;
+      if (el.type === 'checkbox') { el.checked = (v === '1'); }
+      else { el.value = v; }
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      el.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+  }
+  window.addEventListener('load', function(){
+    try {
+      var hash = {}; new URLSearchParams(location.hash.slice(1)).forEach(function(v,k){ hash[k]=v; });
+      var focus = hash.focus !== '0';
+      if (focus) {
+        document.body.classList.add('embed');
+        var main = document.querySelector('main') || document.body;
+        var bar = document.createElement('div'); bar.className = 'ebar';
+        bar.innerHTML = '<span><b>' + TITLE + '</b></span>' +
+                        '<a href="' + FULL + '" target="_blank" rel="noopener">Full page with the explanation \u2197</a>';
+        main.insertBefore(bar, main.firstChild);
+      }
+      var state = {}; Object.keys(PRESET).forEach(function(k){ state[k]=PRESET[k]; });
+      Object.keys(hash).forEach(function(k){ state[k]=hash[k]; });
+      apply(state);
+      window.scrollTo(0, 0);
+    } catch (e) { if (window.console) console.error(e); }
+  });
+})();
+</script>
+</body>
+</html>
